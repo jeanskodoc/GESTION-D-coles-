@@ -22,6 +22,8 @@
             --light-color: #ecf0f1;
             --dark-color: #2c3e50;
             --gray-color: #7f8c8d;
+            --purple-color: #9b59b6;
+            --teal-color: #1abc9c;
         }
 
         body {
@@ -184,6 +186,28 @@
         .btn-danger:hover {
             background-color: #c0392b;
             transform: translateY(-2px);
+        }
+
+        .btn-purple {
+            background-color: var(--purple-color);
+            color: white;
+        }
+
+        .btn-purple:hover {
+            background-color: #8e44ad;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(155, 89, 182, 0.3);
+        }
+
+        .btn-teal {
+            background-color: var(--teal-color);
+            color: white;
+        }
+
+        .btn-teal:hover {
+            background-color: #16a085;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(26, 188, 156, 0.3);
         }
 
         .btn-sm {
@@ -817,6 +841,91 @@
             border-bottom: none;
         }
 
+        /* Export Modal */
+        .export-modal-content {
+            max-width: 800px;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .export-options {
+            margin-top: 20px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+        }
+
+        .export-option {
+            margin-bottom: 15px;
+            padding: 15px;
+            background: white;
+            border-radius: 8px;
+            border: 1px solid #e0e0e0;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .export-option:hover {
+            border-color: var(--primary-color);
+            box-shadow: 0 3px 10px rgba(52, 152, 219, 0.1);
+        }
+
+        .export-option.selected {
+            border-color: var(--primary-color);
+            background-color: rgba(52, 152, 219, 0.05);
+        }
+
+        .export-option label {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            color: var(--secondary-color);
+            width: 100%;
+        }
+
+        .export-option input[type="radio"] {
+            margin: 0;
+        }
+
+        .export-option .option-description {
+            margin-left: 30px;
+            font-size: 0.9rem;
+            color: var(--gray-color);
+            margin-top: 5px;
+        }
+
+        .export-format {
+            margin-top: 20px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+        }
+
+        .format-options {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-top: 10px;
+        }
+
+        .format-option {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .format-option input[type="checkbox"] {
+            margin: 0;
+        }
+
+        .format-option label {
+            cursor: pointer;
+            font-weight: 500;
+            color: var(--secondary-color);
+        }
+
         /* Loading */
         .loading-overlay {
             display: none;
@@ -1018,6 +1127,10 @@
             .bulletin-info {
                 grid-template-columns: 1fr;
             }
+            
+            .format-options {
+                flex-direction: column;
+            }
         }
 
         @media (max-width: 768px) {
@@ -1078,6 +1191,15 @@
             .action-btn {
                 width: 100%;
                 justify-content: center;
+            }
+            
+            .btn-group {
+                flex-direction: column;
+                width: 100%;
+            }
+            
+            .btn-group .btn {
+                width: 100%;
             }
         }
     </style>
@@ -1244,12 +1366,21 @@
                     </div>
                 </div>
                 <div class="quick-action-btn" onclick="showImportModal()">
-                    <div class="quick-action-icon" style="background-color: #9b59b6;">
+                    <div class="quick-action-icon" style="background-color: var(--purple-color);">
                         <i class="fas fa-file-import"></i>
                     </div>
                     <div>
                         <h4>Importer Données</h4>
                         <p>Importer des données depuis un fichier JSON</p>
+                    </div>
+                </div>
+                <div class="quick-action-btn" onclick="showExportModal()">
+                    <div class="quick-action-icon" style="background-color: var(--teal-color);">
+                        <i class="fas fa-file-export"></i>
+                    </div>
+                    <div>
+                        <h4>Exporter Données</h4>
+                        <p>Exporter des données vers un fichier JSON</p>
                     </div>
                 </div>
             </div>
@@ -1265,11 +1396,14 @@
                         <button class="btn btn-warning btn-sm" onclick="showGenerateCredentialsModal()">
                             <i class="fas fa-key"></i> Identifiants
                         </button>
-                        <button class="btn btn-success btn-sm" onclick="exportAllData()">
-                            <i class="fas fa-file-export"></i> Exporter Tous
+                        <button class="btn btn-purple btn-sm" onclick="showExportModal('students')">
+                            <i class="fas fa-file-export"></i> Exporter
                         </button>
-                        <button class="btn btn-sm" style="background-color: #9b59b6; color: white;" onclick="showImportModal('students')">
+                        <button class="btn btn-purple btn-sm" onclick="showImportModal('students')">
                             <i class="fas fa-file-import"></i> Importer
+                        </button>
+                        <button class="btn btn-success btn-sm" onclick="exportAllData()">
+                            <i class="fas fa-database"></i> Tout Exporter
                         </button>
                     </div>
                 </div>
@@ -1302,8 +1436,14 @@
                         <button class="btn btn-warning btn-sm" onclick="showAllSubjects()">
                             <i class="fas fa-list"></i> Voir Tout
                         </button>
-                        <button class="btn btn-sm" style="background-color: #9b59b6; color: white;" onclick="showImportModal('subjects')">
+                        <button class="btn btn-purple btn-sm" onclick="showExportModal('subjects')">
+                            <i class="fas fa-file-export"></i> Exporter
+                        </button>
+                        <button class="btn btn-purple btn-sm" onclick="showImportModal('subjects')">
                             <i class="fas fa-file-import"></i> Importer
+                        </button>
+                        <button class="btn btn-success btn-sm" onclick="exportAllData()">
+                            <i class="fas fa-database"></i> Tout Exporter
                         </button>
                     </div>
                 </div>
@@ -1337,8 +1477,14 @@
                         <button class="btn btn-warning btn-sm" onclick="showAllGrades()">
                             <i class="fas fa-list"></i> Voir Tout
                         </button>
-                        <button class="btn btn-sm" style="background-color: #9b59b6; color: white;" onclick="showImportModal('grades')">
+                        <button class="btn btn-purple btn-sm" onclick="showExportModal('grades')">
+                            <i class="fas fa-file-export"></i> Exporter
+                        </button>
+                        <button class="btn btn-purple btn-sm" onclick="showImportModal('grades')">
                             <i class="fas fa-file-import"></i> Importer
+                        </button>
+                        <button class="btn btn-success btn-sm" onclick="exportAllData()">
+                            <i class="fas fa-database"></i> Tout Exporter
                         </button>
                     </div>
                 </div>
@@ -1527,7 +1673,7 @@
         <!-- Footer -->
         <div class="footer">
             <p>École Supérieure &copy; 2025 - Plateforme de Gestion Scolaire & Universitaire</p>
-            <p>Version 2.1 | Système sécurisé avec authentification</p>
+            <p>Version 2.2 | Système sécurisé avec import/export JSON</p>
         </div>
     </div>
 
@@ -1760,6 +1906,114 @@
         </div>
     </div>
 
+    <!-- Export Modal -->
+    <div class="modal" id="exportModal">
+        <div class="modal-content export-modal-content">
+            <button class="modal-close" onclick="closeModal('exportModal')">&times;</button>
+            <h2 style="margin-bottom: 25px; color: var(--secondary-color);">
+                <i class="fas fa-file-export"></i> Exporter des Données
+            </h2>
+            
+            <div class="export-options">
+                <h5 style="margin-bottom: 15px; color: var(--secondary-color);">Sélectionnez les données à exporter</h5>
+                <div class="export-option" onclick="selectExportOption('all')" id="exportOptionAll">
+                    <label>
+                        <input type="radio" name="exportOption" value="all" checked>
+                        <span>Toutes les données</span>
+                    </label>
+                    <div class="option-description">
+                        Exporter tous les étudiants, matières et notes.
+                    </div>
+                </div>
+                <div class="export-option" onclick="selectExportOption('students')" id="exportOptionStudents">
+                    <label>
+                        <input type="radio" name="exportOption" value="students">
+                        <span>Étudiants uniquement</span>
+                    </label>
+                    <div class="option-description">
+                        Exporter seulement la liste des étudiants.
+                    </div>
+                </div>
+                <div class="export-option" onclick="selectExportOption('subjects')" id="exportOptionSubjects">
+                    <label>
+                        <input type="radio" name="exportOption" value="subjects">
+                        <span>Matières uniquement</span>
+                    </label>
+                    <div class="option-description">
+                        Exporter seulement la liste des matières.
+                    </div>
+                </div>
+                <div class="export-option" onclick="selectExportOption('grades')" id="exportOptionGrades">
+                    <label>
+                        <input type="radio" name="exportOption" value="grades">
+                        <span>Notes uniquement</span>
+                    </label>
+                    <div class="option-description">
+                        Exporter seulement les notes.
+                    </div>
+                </div>
+                <div class="export-option" onclick="selectExportOption('selected')" id="exportOptionSelected">
+                    <label>
+                        <input type="radio" name="exportOption" value="selected">
+                        <span>Sélection spécifique</span>
+                    </label>
+                    <div class="option-description">
+                        Exporter une sélection personnalisée de données.
+                    </div>
+                </div>
+            </div>
+
+            <div class="export-format" id="exportFormatOptions">
+                <h5 style="margin-bottom: 15px; color: var(--secondary-color);">Options de format</h5>
+                <div class="format-options">
+                    <div class="format-option">
+                        <input type="checkbox" id="includeMetadata" checked>
+                        <label for="includeMetadata">Inclure les métadonnées</label>
+                    </div>
+                    <div class="format-option">
+                        <input type="checkbox" id="formatPretty" checked>
+                        <label for="formatPretty">Format lisible (indentation)</label>
+                    </div>
+                    <div class="format-option">
+                        <input type="checkbox" id="includePasswords" checked>
+                        <label for="includePasswords">Inclure les mots de passe</label>
+                    </div>
+                </div>
+            </div>
+
+            <div id="selectedDataOptions" style="display: none; margin-top: 20px;">
+                <h5 style="margin-bottom: 15px; color: var(--secondary-color);">Options de sélection</h5>
+                <div class="form-group">
+                    <label for="exportClassFilter">Filtrer par classe:</label>
+                    <select id="exportClassFilter" class="form-control">
+                        <option value="">Toutes les classes</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="exportDateFilter">Filtrer par date (notes):</label>
+                    <input type="date" id="exportDateFilter" class="form-control">
+                </div>
+            </div>
+
+            <div id="exportPreview" class="import-preview" style="display: none; margin-top: 20px;">
+                <div class="preview-title">Résumé des données à exporter:</div>
+                <div id="exportPreviewContent"></div>
+            </div>
+
+            <div class="btn-group" style="margin-top: 30px;">
+                <button class="btn btn-teal" onclick="generateExportPreview()" id="previewExportBtn">
+                    <i class="fas fa-eye"></i> Prévisualiser
+                </button>
+                <button class="btn btn-success" onclick="processExport()" id="processExportBtn">
+                    <i class="fas fa-download"></i> Exporter les Données
+                </button>
+                <button class="btn btn-danger" onclick="closeModal('exportModal')">
+                    <i class="fas fa-times"></i> Annuler
+                </button>
+            </div>
+        </div>
+    </div>
+
     <!-- Generate Credentials Modal -->
     <div class="modal" id="generateCredentialsModal">
         <div class="modal-content">
@@ -1916,6 +2170,9 @@
             importType: 'all', // 'all', 'students', 'subjects', 'grades'
             importOption: 'append', // 'append', 'replace', 'merge'
             
+            // Export data
+            exportType: 'all', // 'all', 'students', 'subjects', 'grades', 'selected'
+            
             // Imported data for student portal
             importedStudentData: null,
             
@@ -1955,6 +2212,13 @@
             
             // Student select
             document.getElementById('studentSelect').addEventListener('change', loadStudentForCredentials);
+            
+            // Export options
+            document.querySelectorAll('input[name="exportOption"]').forEach(radio => {
+                radio.addEventListener('change', function() {
+                    selectExportOption(this.value);
+                });
+            });
             
             // Navigation tabs
             document.addEventListener('click', function(e) {
@@ -2393,6 +2657,16 @@
                 option.value = cls;
                 option.textContent = cls;
                 reportClass.appendChild(option);
+            });
+            
+            // Export class filter
+            const exportClassFilter = document.getElementById('exportClassFilter');
+            exportClassFilter.innerHTML = '<option value="">Toutes les classes</option>';
+            classes.forEach(cls => {
+                const option = document.createElement('option');
+                option.value = cls;
+                option.textContent = cls;
+                exportClassFilter.appendChild(option);
             });
             
             appData.students.forEach(student => {
@@ -3138,6 +3412,249 @@
                     appData.grades.push(grade);
                 }
             });
+        }
+
+        // ====================
+        // FILE EXPORT FOR ADMIN
+        // ====================
+        function showExportModal(type = null) {
+            if (type) {
+                appData.exportType = type;
+                document.querySelector(`input[name="exportOption"][value="${type}"]`).checked = true;
+                selectExportOption(type);
+            } else {
+                appData.exportType = 'all';
+                document.querySelector('input[name="exportOption"][value="all"]').checked = true;
+                selectExportOption('all');
+            }
+            
+            // Reset preview
+            document.getElementById('exportPreview').style.display = 'none';
+            
+            showModal('exportModal');
+        }
+
+        function selectExportOption(option) {
+            appData.exportType = option;
+            
+            // Update UI for selected option
+            document.querySelectorAll('.export-option').forEach(el => {
+                el.classList.remove('selected');
+            });
+            document.getElementById(`exportOption${option.charAt(0).toUpperCase() + option.slice(1)}`).classList.add('selected');
+            
+            // Show/hide additional options
+            const selectedDataOptions = document.getElementById('selectedDataOptions');
+            if (option === 'selected') {
+                selectedDataOptions.style.display = 'block';
+            } else {
+                selectedDataOptions.style.display = 'none';
+            }
+            
+            // Clear preview
+            document.getElementById('exportPreview').style.display = 'none';
+        }
+
+        function generateExportPreview() {
+            const exportData = prepareExportData();
+            
+            const previewDiv = document.getElementById('exportPreview');
+            const previewContent = document.getElementById('exportPreviewContent');
+            
+            let previewHTML = '';
+            
+            if (exportData.students && exportData.students.length > 0) {
+                previewHTML += '<div class="preview-item"><strong>Étudiants:</strong> ' + exportData.students.length + ' enregistrement(s)</div>';
+                previewHTML += '<div style="margin-left: 20px; font-size: 0.85rem;">';
+                exportData.students.slice(0, 3).forEach((student, index) => {
+                    previewHTML += `<div class="preview-item">${index + 1}. ${student.lastName} ${student.firstName} (${student.matricule})</div>`;
+                });
+                if (exportData.students.length > 3) {
+                    previewHTML += `<div class="preview-item">... et ${exportData.students.length - 3} autres</div>`;
+                }
+                previewHTML += '</div>';
+            }
+            
+            if (exportData.subjects && exportData.subjects.length > 0) {
+                previewHTML += '<div class="preview-item"><strong>Matières:</strong> ' + exportData.subjects.length + ' enregistrement(s)</div>';
+                previewHTML += '<div style="margin-left: 20px; font-size: 0.85rem;">';
+                exportData.subjects.slice(0, 3).forEach((subject, index) => {
+                    previewHTML += `<div class="preview-item">${index + 1}. ${subject.code} - ${subject.name}</div>`;
+                });
+                if (exportData.subjects.length > 3) {
+                    previewHTML += `<div class="preview-item">... et ${exportData.subjects.length - 3} autres</div>`;
+                }
+                previewHTML += '</div>';
+            }
+            
+            if (exportData.grades && exportData.grades.length > 0) {
+                previewHTML += '<div class="preview-item"><strong>Notes:</strong> ' + exportData.grades.length + ' enregistrement(s)</div>';
+            }
+            
+            if (exportData.metadata) {
+                previewHTML += '<div class="preview-item"><strong>Métadonnées:</strong> Incluses</div>';
+            }
+            
+            previewContent.innerHTML = previewHTML;
+            previewDiv.style.display = 'block';
+            
+            // Scroll to preview
+            previewDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+
+        function prepareExportData() {
+            const exportType = appData.exportType;
+            const includeMetadata = document.getElementById('includeMetadata').checked;
+            const includePasswords = document.getElementById('includePasswords').checked;
+            const formatPretty = document.getElementById('formatPretty').checked;
+            
+            let exportData = {};
+            
+            // Add metadata if requested
+            if (includeMetadata) {
+                exportData.metadata = {
+                    exportDate: new Date().toISOString(),
+                    exportType: exportType,
+                    system: "EduManage Pro",
+                    version: "2.2",
+                    institution: "École Supérieure"
+                };
+            }
+            
+            // Prepare data based on export type
+            switch (exportType) {
+                case 'all':
+                    exportData.students = prepareStudentsData(includePasswords);
+                    exportData.subjects = appData.subjects;
+                    exportData.grades = appData.grades;
+                    break;
+                    
+                case 'students':
+                    exportData.students = prepareStudentsData(includePasswords);
+                    break;
+                    
+                case 'subjects':
+                    exportData.subjects = appData.subjects;
+                    break;
+                    
+                case 'grades':
+                    exportData.grades = prepareFilteredGrades();
+                    break;
+                    
+                case 'selected':
+                    const classFilter = document.getElementById('exportClassFilter').value;
+                    const dateFilter = document.getElementById('exportDateFilter').value;
+                    
+                    exportData.students = prepareFilteredStudents(classFilter, includePasswords);
+                    exportData.subjects = appData.subjects;
+                    exportData.grades = prepareFilteredGrades(classFilter, dateFilter);
+                    break;
+            }
+            
+            return exportData;
+        }
+
+        function prepareStudentsData(includePasswords) {
+            return appData.students.map(student => {
+                const studentCopy = { ...student };
+                if (!includePasswords) {
+                    delete studentCopy.password;
+                }
+                return studentCopy;
+            });
+        }
+
+        function prepareFilteredStudents(classFilter) {
+            let filteredStudents = appData.students;
+            
+            if (classFilter) {
+                filteredStudents = filteredStudents.filter(student => student.class === classFilter);
+            }
+            
+            return filteredStudents;
+        }
+
+        function prepareFilteredGrades(classFilter = null, dateFilter = null) {
+            let filteredGrades = appData.grades;
+            
+            if (classFilter) {
+                // Get students in the filtered class
+                const studentsInClass = appData.students.filter(student => student.class === classFilter);
+                const studentIdsInClass = studentsInClass.map(student => student.id);
+                
+                // Filter grades by student IDs
+                filteredGrades = filteredGrades.filter(grade => studentIdsInClass.includes(grade.studentId));
+            }
+            
+            if (dateFilter) {
+                filteredGrades = filteredGrades.filter(grade => grade.date === dateFilter);
+            }
+            
+            return filteredGrades;
+        }
+
+        function processExport() {
+            showLoading();
+            
+            try {
+                const exportData = prepareExportData();
+                const exportType = appData.exportType;
+                const formatPretty = document.getElementById('formatPretty').checked;
+                
+                // Generate filename
+                let filename = 'edumanage_export_';
+                switch (exportType) {
+                    case 'all':
+                        filename += 'complete';
+                        break;
+                    case 'students':
+                        filename += 'etudiants';
+                        break;
+                    case 'subjects':
+                        filename += 'matieres';
+                        break;
+                    case 'grades':
+                        filename += 'notes';
+                        break;
+                    case 'selected':
+                        filename += 'selection';
+                        break;
+                }
+                
+                // Add date to filename
+                const date = new Date().toISOString().split('T')[0];
+                filename += `_${date}.json`;
+                
+                // Export to JSON
+                const jsonData = formatPretty ? 
+                    JSON.stringify(exportData, null, 2) : 
+                    JSON.stringify(exportData);
+                
+                const blob = new Blob([jsonData], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = filename;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+                
+                hideLoading();
+                closeModal('exportModal');
+                
+                let exportMessage = '';
+                if (exportData.students) exportMessage += `${exportData.students.length} étudiant(s), `;
+                if (exportData.subjects) exportMessage += `${exportData.subjects.length} matière(s), `;
+                if (exportData.grades) exportMessage += `${exportData.grades.length} note(s)`;
+                
+                showAlert(`Exportation réussie ! ${exportMessage}`, 'success');
+                
+            } catch (error) {
+                hideLoading();
+                showAlert(`Erreur lors de l'exportation: ${error.message}`, 'error');
+                console.error('Export error:', error);
+            }
         }
 
         // ====================
