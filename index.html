@@ -683,6 +683,140 @@
             justify-content: center;
         }
 
+        /* Import Modal */
+        .import-modal-content {
+            max-width: 800px;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .import-file-box {
+            border: 2px dashed var(--primary-color);
+            border-radius: 10px;
+            padding: 40px 20px;
+            text-align: center;
+            background-color: rgba(52, 152, 219, 0.05);
+            transition: all 0.3s;
+            margin-bottom: 20px;
+        }
+
+        .import-file-box:hover {
+            background-color: rgba(52, 152, 219, 0.1);
+        }
+
+        .import-file-box i {
+            font-size: 3rem;
+            color: var(--primary-color);
+            margin-bottom: 15px;
+        }
+
+        .import-file-box h4 {
+            color: var(--secondary-color);
+            margin-bottom: 10px;
+            font-size: 1.3rem;
+        }
+
+        .import-file-box p {
+            color: var(--gray-color);
+            margin-bottom: 20px;
+        }
+
+        .file-input-wrapper {
+            position: relative;
+            display: inline-block;
+            width: 100%;
+            max-width: 300px;
+        }
+
+        .file-input-wrapper input[type="file"] {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            cursor: pointer;
+        }
+
+        .file-input-label {
+            display: inline-block;
+            padding: 12px 24px;
+            background-color: var(--primary-color);
+            color: white;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 600;
+        }
+
+        .file-input-label:hover {
+            background-color: #2980b9;
+            transform: translateY(-2px);
+        }
+
+        .file-info {
+            margin-top: 15px;
+            font-size: 0.9rem;
+            color: var(--gray-color);
+            text-align: center;
+        }
+
+        .import-options {
+            margin-top: 20px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+        }
+
+        .import-option {
+            margin-bottom: 15px;
+        }
+
+        .import-option label {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            color: var(--secondary-color);
+        }
+
+        .import-option input[type="radio"] {
+            margin: 0;
+        }
+
+        .import-option .option-description {
+            margin-left: 30px;
+            font-size: 0.9rem;
+            color: var(--gray-color);
+            margin-top: 5px;
+        }
+
+        .import-preview {
+            margin-top: 20px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .preview-title {
+            font-weight: bold;
+            color: var(--secondary-color);
+            margin-bottom: 10px;
+        }
+
+        .preview-item {
+            padding: 5px 0;
+            border-bottom: 1px solid #e0e0e0;
+            font-size: 0.9rem;
+        }
+
+        .preview-item:last-child {
+            border-bottom: none;
+        }
+
         /* Loading */
         .loading-overlay {
             display: none;
@@ -811,46 +945,6 @@
         .file-import-box p {
             color: var(--gray-color);
             margin-bottom: 20px;
-        }
-
-        .file-input-wrapper {
-            position: relative;
-            display: inline-block;
-            width: 100%;
-            max-width: 300px;
-        }
-
-        .file-input-wrapper input[type="file"] {
-            position: absolute;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            opacity: 0;
-            cursor: pointer;
-        }
-
-        .file-input-label {
-            display: inline-block;
-            padding: 12px 24px;
-            background-color: var(--primary-color);
-            color: white;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.3s;
-            font-weight: 600;
-        }
-
-        .file-input-label:hover {
-            background-color: #2980b9;
-            transform: translateY(-2px);
-        }
-
-        .file-info {
-            margin-top: 15px;
-            font-size: 0.9rem;
-            color: var(--gray-color);
-            text-align: center;
         }
 
         .imported-data-preview {
@@ -1149,13 +1243,13 @@
                         <p>Évaluation continue des étudiants</p>
                     </div>
                 </div>
-                <div class="quick-action-btn" onclick="exportAllData()">
-                    <div class="quick-action-icon">
-                        <i class="fas fa-file-export"></i>
+                <div class="quick-action-btn" onclick="showImportModal()">
+                    <div class="quick-action-icon" style="background-color: #9b59b6;">
+                        <i class="fas fa-file-import"></i>
                     </div>
                     <div>
-                        <h4>Exporter Données</h4>
-                        <p>Exporter toutes les données du système</p>
+                        <h4>Importer Données</h4>
+                        <p>Importer des données depuis un fichier JSON</p>
                     </div>
                 </div>
             </div>
@@ -1173,6 +1267,9 @@
                         </button>
                         <button class="btn btn-success btn-sm" onclick="exportAllData()">
                             <i class="fas fa-file-export"></i> Exporter Tous
+                        </button>
+                        <button class="btn btn-sm" style="background-color: #9b59b6; color: white;" onclick="showImportModal('students')">
+                            <i class="fas fa-file-import"></i> Importer
                         </button>
                     </div>
                 </div>
@@ -1205,6 +1302,9 @@
                         <button class="btn btn-warning btn-sm" onclick="showAllSubjects()">
                             <i class="fas fa-list"></i> Voir Tout
                         </button>
+                        <button class="btn btn-sm" style="background-color: #9b59b6; color: white;" onclick="showImportModal('subjects')">
+                            <i class="fas fa-file-import"></i> Importer
+                        </button>
                     </div>
                 </div>
                 <div class="table-container">
@@ -1236,6 +1336,9 @@
                         </button>
                         <button class="btn btn-warning btn-sm" onclick="showAllGrades()">
                             <i class="fas fa-list"></i> Voir Tout
+                        </button>
+                        <button class="btn btn-sm" style="background-color: #9b59b6; color: white;" onclick="showImportModal('grades')">
+                            <i class="fas fa-file-import"></i> Importer
                         </button>
                     </div>
                 </div>
@@ -1587,6 +1690,76 @@
         </div>
     </div>
 
+    <!-- Import Modal -->
+    <div class="modal" id="importModal">
+        <div class="modal-content import-modal-content">
+            <button class="modal-close" onclick="closeModal('importModal')">&times;</button>
+            <h2 style="margin-bottom: 25px; color: var(--secondary-color);">
+                <i class="fas fa-file-import"></i> Importer des Données
+            </h2>
+            
+            <div class="import-file-box">
+                <i class="fas fa-cloud-upload-alt"></i>
+                <h4 id="importTitle">Importer un fichier JSON</h4>
+                <p id="importDescription">Importez des données depuis un fichier JSON</p>
+                <div class="file-input-wrapper">
+                    <input type="file" id="adminJsonFileInput" accept=".json" onchange="handleAdminFileImport(this)">
+                    <label for="adminJsonFileInput" class="file-input-label">
+                        <i class="fas fa-folder-open"></i> Choisir un fichier
+                    </label>
+                </div>
+                <div class="file-info">
+                    <small>Format accepté: .json (fichier généré par EduManage Pro)</small>
+                </div>
+            </div>
+
+            <div class="import-options">
+                <h5 style="margin-bottom: 15px; color: var(--secondary-color);">Options d'importation</h5>
+                <div class="import-option">
+                    <label>
+                        <input type="radio" name="importOption" value="append" checked>
+                        <span>Ajouter aux données existantes</span>
+                    </label>
+                    <div class="option-description">
+                        Les nouvelles données seront ajoutées sans remplacer les données existantes.
+                    </div>
+                </div>
+                <div class="import-option">
+                    <label>
+                        <input type="radio" name="importOption" value="replace">
+                        <span>Remplacer les données existantes</span>
+                    </label>
+                    <div class="option-description">
+                        Toutes les données existantes seront remplacées par les nouvelles données.
+                    </div>
+                </div>
+                <div class="import-option">
+                    <label>
+                        <input type="radio" name="importOption" value="merge">
+                        <span>Fusionner avec les données existantes</span>
+                    </label>
+                    <div class="option-description">
+                        Les données seront fusionnées, les doublons seront évités.
+                    </div>
+                </div>
+            </div>
+
+            <div id="adminImportPreview" class="import-preview" style="display: none;">
+                <div class="preview-title">Aperçu des données à importer:</div>
+                <div id="previewContent"></div>
+            </div>
+
+            <div class="btn-group" style="margin-top: 30px;">
+                <button class="btn btn-success" onclick="processImport()" id="processImportBtn" disabled>
+                    <i class="fas fa-check"></i> Importer les Données
+                </button>
+                <button class="btn btn-danger" onclick="closeModal('importModal')">
+                    <i class="fas fa-times"></i> Annuler
+                </button>
+            </div>
+        </div>
+    </div>
+
     <!-- Generate Credentials Modal -->
     <div class="modal" id="generateCredentialsModal">
         <div class="modal-content">
@@ -1737,6 +1910,11 @@
             students: [],
             subjects: [],
             grades: [],
+            
+            // Import data
+            importedFileData: null,
+            importType: 'all', // 'all', 'students', 'subjects', 'grades'
+            importOption: 'append', // 'append', 'replace', 'merge'
             
             // Imported data for student portal
             importedStudentData: null,
@@ -2663,6 +2841,303 @@
                 loadStudentForCredentials();
                 showAlert('Identifiants régénérés avec succès', 'success');
             }
+        }
+
+        // ====================
+        // FILE IMPORT FOR ADMIN
+        // ====================
+        function showImportModal(type = 'all') {
+            appData.importType = type;
+            appData.importedFileData = null;
+            
+            // Set modal title based on import type
+            const titleMap = {
+                'all': 'Importer toutes les données',
+                'students': 'Importer des étudiants',
+                'subjects': 'Importer des matières',
+                'grades': 'Importer des notes'
+            };
+            
+            const descriptionMap = {
+                'all': 'Importez un fichier JSON contenant étudiants, matières et notes',
+                'students': 'Importez un fichier JSON contenant des données d\'étudiants',
+                'subjects': 'Importez un fichier JSON contenant des données de matières',
+                'grades': 'Importez un fichier JSON contenant des données de notes'
+            };
+            
+            document.getElementById('importTitle').textContent = titleMap[type] || titleMap['all'];
+            document.getElementById('importDescription').textContent = descriptionMap[type] || descriptionMap['all'];
+            
+            // Reset file input and preview
+            document.getElementById('adminJsonFileInput').value = '';
+            document.getElementById('adminImportPreview').style.display = 'none';
+            document.getElementById('processImportBtn').disabled = true;
+            
+            showModal('importModal');
+        }
+
+        function handleAdminFileImport(input) {
+            const file = input.files[0];
+            if (!file) return;
+            
+            if (!file.name.endsWith('.json')) {
+                showAlert('Veuillez sélectionner un fichier JSON', 'error');
+                return;
+            }
+            
+            showLoading();
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const data = JSON.parse(e.target.result);
+                    
+                    // Store the imported data
+                    appData.importedFileData = data;
+                    
+                    // Display preview
+                    displayAdminImportPreview(data);
+                    
+                    hideLoading();
+                    document.getElementById('processImportBtn').disabled = false;
+                    
+                } catch (error) {
+                    hideLoading();
+                    showAlert(`Erreur lors de l'import: ${error.message}`, 'error');
+                    console.error('Import error:', error);
+                }
+            };
+            
+            reader.onerror = function() {
+                hideLoading();
+                showAlert('Erreur lors de la lecture du fichier', 'error');
+            };
+            
+            reader.readAsText(file);
+        }
+
+        function displayAdminImportPreview(data) {
+            const previewDiv = document.getElementById('adminImportPreview');
+            const previewContent = document.getElementById('previewContent');
+            
+            let previewHTML = '';
+            const importType = appData.importType;
+            
+            // Get import option
+            appData.importOption = document.querySelector('input[name="importOption"]:checked').value;
+            
+            if (importType === 'all' || importType === 'students') {
+                const students = data.students || (importType === 'students' ? data : []);
+                if (students.length > 0) {
+                    previewHTML += '<div class="preview-item"><strong>Étudiants:</strong> ' + students.length + ' enregistrement(s)</div>';
+                    previewHTML += '<div style="margin-left: 20px; font-size: 0.85rem;">';
+                    students.slice(0, 3).forEach((student, index) => {
+                        previewHTML += `<div class="preview-item">${index + 1}. ${student.lastName} ${student.firstName} (${student.matricule})</div>`;
+                    });
+                    if (students.length > 3) {
+                        previewHTML += `<div class="preview-item">... et ${students.length - 3} autres</div>`;
+                    }
+                    previewHTML += '</div>';
+                }
+            }
+            
+            if (importType === 'all' || importType === 'subjects') {
+                const subjects = data.subjects || (importType === 'subjects' ? data : []);
+                if (subjects.length > 0) {
+                    previewHTML += '<div class="preview-item"><strong>Matières:</strong> ' + subjects.length + ' enregistrement(s)</div>';
+                    previewHTML += '<div style="margin-left: 20px; font-size: 0.85rem;">';
+                    subjects.slice(0, 3).forEach((subject, index) => {
+                        previewHTML += `<div class="preview-item">${index + 1}. ${subject.code} - ${subject.name}</div>`;
+                    });
+                    if (subjects.length > 3) {
+                        previewHTML += `<div class="preview-item">... et ${subjects.length - 3} autres</div>`;
+                    }
+                    previewHTML += '</div>';
+                }
+            }
+            
+            if (importType === 'all' || importType === 'grades') {
+                const grades = data.grades || (importType === 'grades' ? data : []);
+                if (grades.length > 0) {
+                    previewHTML += '<div class="preview-item"><strong>Notes:</strong> ' + grades.length + ' enregistrement(s)</div>';
+                }
+            }
+            
+            if (!previewHTML) {
+                previewHTML = '<div class="preview-item">Aucune donnée détectée dans le fichier</div>';
+            }
+            
+            previewContent.innerHTML = previewHTML;
+            previewDiv.style.display = 'block';
+        }
+
+        function processImport() {
+            if (!appData.importedFileData) {
+                showAlert('Aucune donnée à importer', 'error');
+                return;
+            }
+            
+            showLoading();
+            
+            try {
+                const importType = appData.importType;
+                const importOption = appData.importOption;
+                
+                if (importType === 'all' || importType === 'students') {
+                    importStudents(appData.importedFileData.students || appData.importedFileData, importOption);
+                }
+                
+                if (importType === 'all' || importType === 'subjects') {
+                    importSubjects(appData.importedFileData.subjects || appData.importedFileData, importOption);
+                }
+                
+                if (importType === 'all' || importType === 'grades') {
+                    importGrades(appData.importedFileData.grades || appData.importedFileData, importOption);
+                }
+                
+                // Save and refresh
+                saveAdminData();
+                updateDashboard();
+                renderStudentsTable();
+                renderSubjectsTable();
+                renderGradesTable();
+                populateSelects();
+                
+                hideLoading();
+                closeModal('importModal');
+                
+                showAlert('Importation terminée avec succès !', 'success');
+                
+            } catch (error) {
+                hideLoading();
+                showAlert(`Erreur lors de l'importation: ${error.message}`, 'error');
+                console.error('Import processing error:', error);
+            }
+        }
+
+        function importStudents(studentsData, option) {
+            if (!Array.isArray(studentsData)) {
+                studentsData = [studentsData];
+            }
+            
+            if (option === 'replace') {
+                appData.students = [];
+            }
+            
+            studentsData.forEach(student => {
+                // Ensure student has required fields
+                if (!student.id) {
+                    student.id = Date.now().toString() + Math.random().toString(36).substr(2, 9);
+                }
+                
+                if (!student.createdAt) {
+                    student.createdAt = new Date().toISOString();
+                }
+                
+                // Generate username and password if not present
+                if (!student.username && student.firstName && student.lastName) {
+                    student.username = generateUsername(student.firstName, student.lastName);
+                }
+                
+                if (!student.password) {
+                    student.password = generatePassword();
+                }
+                
+                // Check for duplicates based on matricule
+                const existingIndex = appData.students.findIndex(s => s.matricule === student.matricule);
+                
+                if (existingIndex >= 0) {
+                    if (option === 'merge') {
+                        // Merge data, keep existing if conflict
+                        appData.students[existingIndex] = {
+                            ...appData.students[existingIndex],
+                            ...student,
+                            id: appData.students[existingIndex].id // Keep original ID
+                        };
+                    }
+                } else {
+                    appData.students.push(student);
+                }
+            });
+        }
+
+        function importSubjects(subjectsData, option) {
+            if (!Array.isArray(subjectsData)) {
+                subjectsData = [subjectsData];
+            }
+            
+            if (option === 'replace') {
+                appData.subjects = [];
+            }
+            
+            subjectsData.forEach(subject => {
+                // Ensure subject has required fields
+                if (!subject.id) {
+                    subject.id = Date.now().toString() + Math.random().toString(36).substr(2, 9);
+                }
+                
+                if (!subject.createdAt) {
+                    subject.createdAt = new Date().toISOString();
+                }
+                
+                // Check for duplicates based on code
+                const existingIndex = appData.subjects.findIndex(s => s.code === subject.code);
+                
+                if (existingIndex >= 0) {
+                    if (option === 'merge') {
+                        // Merge data, keep existing if conflict
+                        appData.subjects[existingIndex] = {
+                            ...appData.subjects[existingIndex],
+                            ...subject,
+                            id: appData.subjects[existingIndex].id // Keep original ID
+                        };
+                    }
+                } else {
+                    appData.subjects.push(subject);
+                }
+            });
+        }
+
+        function importGrades(gradesData, option) {
+            if (!Array.isArray(gradesData)) {
+                gradesData = [gradesData];
+            }
+            
+            if (option === 'replace') {
+                appData.grades = [];
+            }
+            
+            gradesData.forEach(grade => {
+                // Ensure grade has required fields
+                if (!grade.id) {
+                    grade.id = Date.now().toString() + Math.random().toString(36).substr(2, 9);
+                }
+                
+                if (!grade.createdAt) {
+                    grade.createdAt = new Date().toISOString();
+                }
+                
+                // Check for duplicates (same student, subject, date, and type)
+                const existingIndex = appData.grades.findIndex(g => 
+                    g.studentId === grade.studentId && 
+                    g.subjectId === grade.subjectId && 
+                    g.date === grade.date && 
+                    g.type === grade.type
+                );
+                
+                if (existingIndex >= 0) {
+                    if (option === 'merge') {
+                        // Merge data, keep existing if conflict
+                        appData.grades[existingIndex] = {
+                            ...appData.grades[existingIndex],
+                            ...grade,
+                            id: appData.grades[existingIndex].id // Keep original ID
+                        };
+                    }
+                } else {
+                    appData.grades.push(grade);
+                }
+            });
         }
 
         // ====================
