@@ -1,0 +1,1677 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>EduManage Pro - Notes Étudiant</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Bibliothèque jsPDF pour générer des PDF -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <!-- html2canvas pour capturer le contenu HTML -->
+    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+    <style>
+        :root {
+            --primary-color: #3498db;
+            --primary-dark: #2980b9;
+            --success-color: #2ecc71;
+            --warning-color: #f39c12;
+            --danger-color: #e74c3c;
+            --light-color: #f8f9fa;
+            --dark-color: #2c3e50;
+            --gray-light: #ecf0f1;
+            --gray: #95a5a6;
+            --border-radius: 12px;
+            --box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            --box-shadow-hover: 0 4px 15px rgba(0, 0, 0, 0.15);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background-color: #f5f7fa;
+            color: #333;
+            line-height: 1.5;
+            overflow-x: hidden;
+            padding-bottom: 80px; /* Pour la barre de navigation */
+        }
+        
+        /* Écran de connexion */
+        .login-container {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 20px;
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--dark-color) 100%);
+        }
+        
+        .login-box {
+            background-color: white;
+            border-radius: var(--border-radius);
+            padding: 30px 25px;
+            box-shadow: var(--box-shadow-hover);
+            max-width: 400px;
+            margin: 0 auto;
+            width: 100%;
+        }
+        
+        .app-logo {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+        
+        .app-logo h1 {
+            color: var(--primary-color);
+            font-size: 1.8rem;
+            margin-bottom: 5px;
+        }
+        
+        .app-logo p {
+            color: var(--gray);
+            font-size: 0.9rem;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: var(--dark-color);
+        }
+        
+        .form-input {
+            width: 100%;
+            padding: 16px 15px;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            font-size: 1rem;
+            background-color: #fafafa;
+            transition: all 0.3s;
+        }
+        
+        .form-input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            background-color: white;
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+        }
+        
+        .btn {
+            width: 100%;
+            padding: 16px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        
+        .btn-primary {
+            background-color: var(--primary-color);
+            color: white;
+        }
+        
+        .btn-primary:active {
+            background-color: var(--primary-dark);
+            transform: translateY(1px);
+        }
+        
+        .login-error {
+            background-color: rgba(231, 76, 60, 0.1);
+            color: var(--danger-color);
+            padding: 12px;
+            border-radius: 8px;
+            margin-top: 15px;
+            text-align: center;
+            font-size: 0.9rem;
+            display: none;
+        }
+        
+        .demo-accounts {
+            margin-top: 25px;
+            padding: 15px;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            color: white;
+            font-size: 0.85rem;
+        }
+        
+        .demo-accounts p {
+            margin-bottom: 10px;
+            font-weight: 500;
+        }
+        
+        .demo-account {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .demo-account:last-child {
+            border-bottom: none;
+        }
+        
+        /* Interface principale */
+        .hidden {
+            display: none !important;
+        }
+        
+        /* En-tête */
+        .app-header {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--dark-color) 100%);
+            color: white;
+            padding: 20px 15px 15px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .app-title h1 {
+            font-size: 1.4rem;
+            font-weight: 600;
+        }
+        
+        .app-title p {
+            font-size: 0.85rem;
+            opacity: 0.9;
+        }
+        
+        .user-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            background-color: white;
+            color: var(--primary-color);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
+        
+        .user-info h3 {
+            font-size: 1rem;
+            font-weight: 600;
+        }
+        
+        .user-info p {
+            font-size: 0.8rem;
+            opacity: 0.9;
+        }
+        
+        .logout-btn {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.2rem;
+            cursor: pointer;
+            padding: 8px;
+        }
+        
+        /* Navigation par onglets */
+        .tab-nav {
+            display: flex;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 5px;
+            margin-top: 10px;
+        }
+        
+        .tab-btn {
+            flex: 1;
+            padding: 12px 5px;
+            text-align: center;
+            background: none;
+            border: none;
+            color: rgba(255, 255, 255, 0.7);
+            font-weight: 500;
+            font-size: 0.9rem;
+            cursor: pointer;
+            border-radius: 8px;
+            transition: all 0.3s;
+        }
+        
+        .tab-btn.active {
+            background-color: white;
+            color: var(--primary-color);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        
+        /* Contenu principal */
+        .main-content {
+            padding: 20px 15px;
+        }
+        
+        /* Cartes de statistiques */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-bottom: 25px;
+        }
+        
+        .stat-card {
+            background-color: white;
+            border-radius: var(--border-radius);
+            padding: 15px 10px;
+            text-align: center;
+            box-shadow: var(--box-shadow);
+        }
+        
+        .stat-card .stat-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin: 8px 0;
+        }
+        
+        .stat-card .stat-label {
+            font-size: 0.8rem;
+            color: var(--gray);
+        }
+        
+        .stat-average .stat-value {
+            color: var(--primary-color);
+        }
+        
+        .stat-validated .stat-value {
+            color: var(--success-color);
+        }
+        
+        .stat-success .stat-value {
+            color: var(--warning-color);
+        }
+        
+        /* Cartes d'information */
+        .info-card {
+            background-color: white;
+            border-radius: var(--border-radius);
+            padding: 20px;
+            margin-bottom: 15px;
+            box-shadow: var(--box-shadow);
+        }
+        
+        .info-card h3 {
+            color: var(--dark-color);
+            margin-bottom: 15px;
+            font-size: 1.1rem;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--gray-light);
+        }
+        
+        .info-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid var(--gray-light);
+        }
+        
+        .info-item:last-child {
+            border-bottom: none;
+        }
+        
+        .info-label {
+            font-weight: 500;
+            color: var(--dark-color);
+        }
+        
+        .info-value {
+            color: #555;
+            text-align: right;
+            max-width: 60%;
+        }
+        
+        /* Tableaux pour mobile */
+        .grades-table-container {
+            overflow-x: auto;
+            margin-bottom: 20px;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+        }
+        
+        .grades-table {
+            width: 100%;
+            min-width: 500px;
+            border-collapse: collapse;
+            background-color: white;
+        }
+        
+        .grades-table th {
+            background-color: var(--light-color);
+            padding: 15px 10px;
+            text-align: left;
+            font-weight: 600;
+            color: var(--dark-color);
+            border-bottom: 2px solid var(--gray-light);
+        }
+        
+        .grades-table td {
+            padding: 12px 10px;
+            border-bottom: 1px solid var(--gray-light);
+        }
+        
+        .grades-table tr:last-child td {
+            border-bottom: none;
+        }
+        
+        .grade-bad {
+            color: var(--danger-color);
+            font-weight: 600;
+        }
+        
+        .grade-good {
+            color: var(--success-color);
+            font-weight: 600;
+        }
+        
+        /* Section remarques */
+        .remarks-card {
+            background-color: white;
+            border-radius: var(--border-radius);
+            padding: 20px;
+            margin-top: 20px;
+            box-shadow: var(--box-shadow);
+            border-left: 4px solid var(--warning-color);
+        }
+        
+        .remarks-card h4 {
+            color: var(--dark-color);
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        /* Boutons d'action */
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 25px;
+        }
+        
+        .action-btn {
+            flex: 1;
+            padding: 16px;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        
+        .action-btn:active {
+            transform: translateY(1px);
+        }
+        
+        .btn-print {
+            background-color: var(--primary-color);
+            color: white;
+        }
+        
+        .btn-download {
+            background-color: var(--success-color);
+            color: white;
+        }
+        
+        /* Barre de navigation inférieure */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background-color: white;
+            display: flex;
+            justify-content: space-around;
+            padding: 12px 0;
+            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+            z-index: 100;
+        }
+        
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-decoration: none;
+            color: var(--gray);
+            transition: all 0.3s;
+            flex: 1;
+            padding: 8px 0;
+        }
+        
+        .nav-item.active {
+            color: var(--primary-color);
+        }
+        
+        .nav-icon {
+            font-size: 1.3rem;
+            margin-bottom: 4px;
+        }
+        
+        .nav-label {
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+        
+        /* Écran de chargement */
+        .loading {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 200px;
+            color: var(--gray);
+        }
+        
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid var(--gray-light);
+            border-top-color: var(--primary-color);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 15px;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        /* Responsive pour tablettes */
+        @media (min-width: 768px) {
+            .login-container {
+                padding: 40px;
+            }
+            
+            .login-box {
+                padding: 40px 35px;
+            }
+            
+            .app-header {
+                padding: 20px 25px 15px;
+            }
+            
+            .main-content {
+                padding: 25px 30px;
+            }
+            
+            .stats-grid {
+                grid-template-columns: repeat(3, 1fr);
+                gap: 15px;
+            }
+            
+            .stat-card {
+                padding: 20px 15px;
+            }
+            
+            .stat-card .stat-value {
+                font-size: 1.8rem;
+            }
+            
+            .bottom-nav {
+                padding: 15px 0;
+            }
+            
+            .nav-icon {
+                font-size: 1.5rem;
+            }
+            
+            .nav-label {
+                font-size: 0.85rem;
+            }
+            
+            .info-grid {
+                display: grid;
+                grid-template-columns: repeat(2, 1fr);
+                gap: 15px;
+            }
+        }
+        
+        /* Très petits écrans */
+        @media (max-width: 360px) {
+            .app-title h1 {
+                font-size: 1.2rem;
+            }
+            
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .stats-grid .stat-card:last-child {
+                grid-column: span 2;
+                max-width: 50%;
+                justify-self: center;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+            }
+        }
+        
+        /* Animation pour les transitions de page */
+        .page-content {
+            animation: fadeIn 0.3s ease-in-out;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* Améliorations pour le tactile */
+        .btn, .tab-btn, .nav-item, .logout-btn {
+            -webkit-user-select: none;
+            user-select: none;
+        }
+        
+        /* Correction pour iOS */
+        input, button, select, textarea {
+            appearance: none;
+            -webkit-appearance: none;
+            border-radius: 0;
+        }
+        
+        /* Scrollbar personnalisée */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: #c1c1c1;
+            border-radius: 10px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: #a8a8a8;
+        }
+        
+        /* Styles pour l'impression */
+        @media print {
+            body * {
+                visibility: hidden;
+            }
+            
+            #printable-bulletin, #printable-bulletin * {
+                visibility: visible;
+            }
+            
+            #printable-bulletin {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
+                padding: 20px;
+                font-size: 12pt;
+                background: white;
+            }
+            
+            .no-print {
+                display: none !important;
+            }
+            
+            .action-buttons {
+                display: none !important;
+            }
+            
+            .bottom-nav {
+                display: none !important;
+            }
+        }
+        
+        /* Masquer le bulletin imprimable par défaut */
+        #printable-bulletin-container {
+            position: absolute;
+            left: -9999px;
+            top: -9999px;
+        }
+        
+        /* Styles pour le bulletin imprimable */
+        .printable-bulletin {
+            width: 210mm;
+            min-height: 297mm;
+            padding: 20mm;
+            background: white;
+            font-family: 'Times New Roman', Times, serif;
+            color: #000;
+        }
+        
+        .print-header {
+            text-align: center;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #000;
+            padding-bottom: 15px;
+        }
+        
+        .print-header h1 {
+            font-size: 24pt;
+            margin-bottom: 10px;
+        }
+        
+        .print-header h2 {
+            font-size: 16pt;
+            margin-bottom: 5px;
+        }
+        
+        .print-info {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 25px;
+        }
+        
+        .print-info-section {
+            width: 48%;
+        }
+        
+        .print-stats {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 25px;
+            text-align: center;
+        }
+        
+        .print-stat {
+            flex: 1;
+            padding: 15px;
+            border: 1px solid #000;
+            margin: 0 5px;
+        }
+        
+        .print-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 25px;
+        }
+        
+        .print-table th, .print-table td {
+            border: 1px solid #000;
+            padding: 10px;
+            text-align: center;
+        }
+        
+        .print-table th {
+            background-color: #f2f2f2;
+            font-weight: bold;
+        }
+        
+        .print-remarks {
+            margin-top: 30px;
+            padding: 15px;
+            border: 1px solid #000;
+        }
+        
+        .print-footer {
+            margin-top: 40px;
+            text-align: center;
+            font-size: 10pt;
+        }
+    </style>
+</head>
+<body>
+    <!-- Écran de connexion -->
+    <div id="loginPage" class="login-container">
+        <div class="login-box">
+            <div class="app-logo">
+                <h1>EduManage Pro</h1>
+                <p>Consultation des notes mobiles</p>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">Matricule</label>
+                <input type="text" id="matricule" class="form-input" placeholder="Votre numéro de matricule">
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">Mot de passe</label>
+                <input type="password" id="password" class="form-input" placeholder="Votre mot de passe">
+            </div>
+            
+            <button id="loginBtn" class="btn btn-primary">
+                <i class="fas fa-sign-in-alt"></i> Se connecter
+            </button>
+            
+            <div id="loginError" class="login-error">
+                Matricule ou mot de passe incorrect
+            </div>
+            
+            <div class="demo-accounts">
+                <p>Comptes de démonstration :</p>
+                <div class="demo-account">
+                    <span>Matricule: 0987</span>
+                    <span>Mot de passe: jean</span>
+                </div>
+                <div class="demo-account">
+                    <span>Matricule: 1</span>
+                    <span>Mot de passe: ept</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Interface principale -->
+    <div id="mainApp" class="hidden">
+        <!-- En-tête avec informations utilisateur -->
+        <header class="app-header">
+            <div class="header-top">
+                <div class="app-title">
+                    <h1>EduManage Pro</h1>
+                    <p id="currentPageTitle">Tableau de bord</p>
+                </div>
+                
+                <div class="user-header">
+                    <div class="user-avatar" id="userAvatar">KJ</div>
+                    <div class="user-info">
+                        <h3 id="userName">KOLA Jean</h3>
+                        <p id="userClass">Licence 1 - MATHS</p>
+                    </div>
+                    <button class="logout-btn" id="logoutBtn">
+                        <i class="fas fa-sign-out-alt"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Navigation par onglets (visible sur tablette) -->
+            <div class="tab-nav" id="tabNav">
+                <button class="tab-btn active" data-page="dashboard">
+                    <i class="fas fa-home"></i> Tableau
+                </button>
+                <button class="tab-btn" data-page="grades">
+                    <i class="fas fa-list-alt"></i> Notes
+                </button>
+                <button class="tab-btn" data-page="bulletin">
+                    <i class="fas fa-file-alt"></i> Bulletin
+                </button>
+                <button class="tab-btn" data-page="profile">
+                    <i class="fas fa-user"></i> Profil
+                </button>
+            </div>
+        </header>
+        
+        <!-- Contenu principal -->
+        <main class="main-content">
+            <!-- Page Tableau de bord -->
+            <div id="dashboardPage" class="page-content">
+                <div class="stats-grid">
+                    <div class="stat-card stat-average">
+                        <div class="stat-label">Moyenne</div>
+                        <div class="stat-value" id="generalAverage">8.50/20</div>
+                        <div class="stat-label">Semestre 1</div>
+                    </div>
+                    
+                    <div class="stat-card stat-validated">
+                        <div class="stat-label">Validées</div>
+                        <div class="stat-value" id="validatedSubjects">0/2</div>
+                        <div class="stat-label">Matières</div>
+                    </div>
+                    
+                    <div class="stat-card stat-success">
+                        <div class="stat-label">Réussite</div>
+                        <div class="stat-value" id="successRate">0.0%</div>
+                        <div class="stat-label">Taux</div>
+                    </div>
+                </div>
+                
+                <div class="info-grid">
+                    <div class="info-card">
+                        <h3><i class="fas fa-user-circle"></i> Informations personnelles</h3>
+                        <div class="info-item">
+                            <span class="info-label">Nom complet</span>
+                            <span class="info-value" id="studentName">KOLA Jean</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Matricule</span>
+                            <span class="info-value" id="studentId">0987</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Date de naissance</span>
+                            <span class="info-value">15/05/2004</span>
+                        </div>
+                    </div>
+                    
+                    <div class="info-card">
+                        <h3><i class="fas fa-graduation-cap"></i> Informations académiques</h3>
+                        <div class="info-item">
+                            <span class="info-label">Classe</span>
+                            <span class="info-value" id="studentClass">Licence 1</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Spécialité</span>
+                            <span class="info-value" id="studentSpecialty">MATHS</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Année académique</span>
+                            <span class="info-value">2025-2026</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="info-card">
+                    <h3><i class="fas fa-chart-line"></i> Dernières notes</h3>
+                    <div class="grades-table-container">
+                        <table class="grades-table">
+                            <thead>
+                                <tr>
+                                    <th>Matière</th>
+                                    <th>Coeff</th>
+                                    <th>Note</th>
+                                    <th>Appréciation</th>
+                                </tr>
+                            </thead>
+                            <tbody id="recentGrades">
+                                <!-- Les notes seront ajoutées dynamiquement -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Page Notes détaillées -->
+            <div id="gradesPage" class="page-content hidden">
+                <div class="info-card">
+                    <h3><i class="fas fa-list-alt"></i> Notes détaillées par matière</h3>
+                    <div class="grades-table-container">
+                        <table class="grades-table">
+                            <thead>
+                                <tr>
+                                    <th>Matière</th>
+                                    <th>Professeur</th>
+                                    <th>Coeff</th>
+                                    <th>Note</th>
+                                    <th>Statut</th>
+                                </tr>
+                            </thead>
+                            <tbody id="detailedGrades">
+                                <!-- Les notes détaillées seront ajoutées dynamiquement -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                <div class="remarks-card">
+                    <h4><i class="fas fa-comment-alt"></i> Appréciations des professeurs</h4>
+                    <div id="teacherRemarks">
+                        <!-- Les remarques seront ajoutées dynamiquement -->
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Page Bulletin scolaire -->
+            <div id="bulletinPage" class="page-content hidden">
+                <div class="info-card">
+                    <h3><i class="fas fa-file-certificate"></i> Bulletin Scolaire</h3>
+                    
+                    <div class="info-item">
+                        <span class="info-label">Étudiant</span>
+                        <span class="info-value" id="bulletinStudentName">KOLA Jean</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Matricule</span>
+                        <span class="info-value" id="bulletinStudentId">0987</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Classe</span>
+                        <span class="info-value" id="bulletinClass">Licence 1</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Spécialité</span>
+                        <span class="info-value" id="bulletinSpecialty">MATHS</span>
+                    </div>
+                    
+                    <div class="stats-grid" style="margin-top: 20px;">
+                        <div class="stat-card stat-average">
+                            <div class="stat-label">Moyenne</div>
+                            <div class="stat-value" id="bulletinAverage">8.50/20</div>
+                        </div>
+                        
+                        <div class="stat-card stat-validated">
+                            <div class="stat-label">Validées</div>
+                            <div class="stat-value" id="bulletinValidated">0/2</div>
+                        </div>
+                        
+                        <div class="stat-card stat-success">
+                            <div class="stat-label">Réussite</div>
+                            <div class="stat-value" id="bulletinSuccess">0.0%</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="info-card">
+                    <h3><i class="fas fa-table"></i> Détail des notes</h3>
+                    <div class="grades-table-container">
+                        <table class="grades-table">
+                            <thead>
+                                <tr>
+                                    <th>Matière</th>
+                                    <th>Professeur</th>
+                                    <th>Coeff</th>
+                                    <th>Note</th>
+                                    <th>Appréciation</th>
+                                </tr>
+                            </thead>
+                            <tbody id="bulletinGrades">
+                                <!-- Les notes du bulletin seront ajoutées dynamiquement -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                <div class="remarks-card">
+                    <h4><i class="fas fa-clipboard-check"></i> Remarques générales</h4>
+                    <p id="bulletinRemarks">Insuffisant. Doit travailler davantage.</p>
+                </div>
+                
+                <div class="action-buttons">
+                    <button class="action-btn btn-print" id="printBulletin">
+                        <i class="fas fa-print"></i> Imprimer
+                    </button>
+                    <button class="action-btn btn-download" id="downloadBulletin">
+                        <i class="fas fa-download"></i> Télécharger PDF
+                    </button>
+                </div>
+                
+                <div style="text-align: center; margin-top: 25px; color: var(--gray); font-size: 0.85rem;">
+                    <p>Date d'émission: <span id="bulletinDate">19/12/2025</span></p>
+                    <p>Signature du Directeur des Études</p>
+                </div>
+            </div>
+            
+            <!-- Page Profil étudiant -->
+            <div id="profilePage" class="page-content hidden">
+                <div class="info-card">
+                    <h3><i class="fas fa-id-card"></i> Profil étudiant</h3>
+                    
+                    <div class="info-item">
+                        <span class="info-label">Nom complet</span>
+                        <span class="info-value" id="profileName">KOLA Jean</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Matricule</span>
+                        <span class="info-value" id="profileId">0987</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Date de naissance</span>
+                        <span class="info-value">15/05/2004</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Lieu de naissance</span>
+                        <span class="info-value">Abidjan, Côte d'Ivoire</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Adresse</span>
+                        <span class="info-value">Rue des Écoles, Cocody</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Téléphone</span>
+                        <span class="info-value">+225 07 12 34 56 78</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Email</span>
+                        <span class="info-value">kola.jean@edu.ci</span>
+                    </div>
+                </div>
+                
+                <div class="info-card">
+                    <h3><i class="fas fa-history"></i> Historique académique</h3>
+                    <div class="grades-table-container">
+                        <table class="grades-table">
+                            <thead>
+                                <tr>
+                                    <th>Année</th>
+                                    <th>Classe</th>
+                                    <th>Moyenne</th>
+                                    <th>Résultat</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>2025-2026</td>
+                                    <td>Licence 1</td>
+                                    <td>8.50</td>
+                                    <td><span class="grade-bad">En cours</span></td>
+                                </tr>
+                                <tr>
+                                    <td>2024-2025</td>
+                                    <td>Terminale</td>
+                                    <td>14.20</td>
+                                    <td><span class="grade-good">Admis</span></td>
+                                </tr>
+                                <tr>
+                                    <td>2023-2024</td>
+                                    <td>Première</td>
+                                    <td>13.80</td>
+                                    <td><span class="grade-good">Admis</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </main>
+        
+        <!-- Barre de navigation inférieure (pour mobiles) -->
+        <nav class="bottom-nav">
+            <a href="#" class="nav-item active" data-page="dashboard">
+                <i class="fas fa-home nav-icon"></i>
+                <span class="nav-label">Tableau</span>
+            </a>
+            <a href="#" class="nav-item" data-page="grades">
+                <i class="fas fa-list-alt nav-icon"></i>
+                <span class="nav-label">Notes</span>
+            </a>
+            <a href="#" class="nav-item" data-page="bulletin">
+                <i class="fas fa-file-alt nav-icon"></i>
+                <span class="nav-label">Bulletin</span>
+            </a>
+            <a href="#" class="nav-item" data-page="profile">
+                <i class="fas fa-user nav-icon"></i>
+                <span class="nav-label">Profil</span>
+            </a>
+        </nav>
+    </div>
+    
+    <!-- Conteneur pour le bulletin imprimable (caché) -->
+    <div id="printable-bulletin-container">
+        <div id="printable-bulletin" class="printable-bulletin">
+            <!-- Contenu généré dynamiquement pour l'impression -->
+        </div>
+    </div>
+
+    <script>
+        // Données des étudiants
+        const studentsData = {
+            "0987": {
+                password: "jean",
+                name: "KOLA Jean",
+                class: "Licence 1",
+                specialty: "MATHS",
+                average: "8.50",
+                validated: "0/2",
+                successRate: "0.0%",
+                remarks: "Insuffisant. Doit travailler davantage.",
+                grades: [
+                    { subject: "Analyse COMPLEXE", teacher: "ERO", coefficient: "1", grade: "8.50", appreciation: "Insuffisant", status: "Échoué" },
+                    { subject: "ALGORITHM", teacher: "ZERTY", coefficient: "1", grade: "8.50", appreciation: "Insuffisant", status: "Échoué" }
+                ]
+            },
+            "1": {
+                password: "ept",
+                name: "EPT KOLA",
+                class: "Licence 1",
+                specialty: "MATHS",
+                average: "11.25",
+                validated: "1/2",
+                successRate: "50.0%",
+                remarks: "Satisfaisant. Des efforts sont nécessaires.",
+                grades: [
+                    { subject: "Analyse COMPLEXE", teacher: "ERO", coefficient: "1", grade: "13.00", appreciation: "Bien", status: "Validé" },
+                    { subject: "ALGORITHM", teacher: "ZERTY", coefficient: "1", grade: "9.50", appreciation: "Insuffisant", status: "Échoué" }
+                ]
+            }
+        };
+
+        // Éléments DOM
+        const loginPage = document.getElementById('loginPage');
+        const mainApp = document.getElementById('mainApp');
+        const loginBtn = document.getElementById('loginBtn');
+        const logoutBtn = document.getElementById('logoutBtn');
+        const matriculeInput = document.getElementById('matricule');
+        const passwordInput = document.getElementById('password');
+        const loginError = document.getElementById('loginError');
+        const currentPageTitle = document.getElementById('currentPageTitle');
+        const printableBulletin = document.getElementById('printable-bulletin');
+        
+        // Variables d'état
+        let currentStudentId = null;
+        let currentPage = 'dashboard';
+        let isMobile = window.innerWidth < 768;
+        let currentStudentData = null;
+
+        // Initialisation
+        document.addEventListener('DOMContentLoaded', function() {
+            // Détection de la taille d'écran
+            window.addEventListener('resize', handleResize);
+            
+            // Gestion de la connexion
+            loginBtn.addEventListener('click', handleLogin);
+            passwordInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') handleLogin();
+            });
+            
+            // Gestion de la déconnexion
+            logoutBtn.addEventListener('click', handleLogout);
+            
+            // Gestion de la navigation
+            setupNavigation();
+            
+            // Gestion des boutons du bulletin
+            document.getElementById('printBulletin').addEventListener('click', printBulletin);
+            document.getElementById('downloadBulletin').addEventListener('click', downloadBulletinPDF);
+            
+            // Initialiser la date du bulletin
+            updateBulletinDate();
+                
+            // Ajuster l'interface en fonction de la taille d'écran
+            handleResize();
+        });
+        
+        // Mettre à jour la date du bulletin
+        function updateBulletinDate() {
+            const today = new Date();
+            const formattedDate = 
+                today.getDate().toString().padStart(2, '0') + '/' + 
+                (today.getMonth() + 1).toString().padStart(2, '0') + '/' + 
+                today.getFullYear();
+            document.getElementById('bulletinDate').textContent = formattedDate;
+        }
+        
+        // Gestion du redimensionnement de la fenêtre
+        function handleResize() {
+            isMobile = window.innerWidth < 768;
+            const tabNav = document.getElementById('tabNav');
+            const bottomNav = document.querySelector('.bottom-nav');
+            
+            if (isMobile) {
+                // Mode mobile: afficher la barre de navigation inférieure
+                tabNav.style.display = 'none';
+                bottomNav.style.display = 'flex';
+            } else {
+                // Mode tablette: afficher les onglets en haut
+                tabNav.style.display = 'flex';
+                bottomNav.style.display = 'none';
+            }
+        }
+        
+        // Configuration de la navigation
+        function setupNavigation() {
+            // Navigation par onglets (tablette)
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const page = this.getAttribute('data-page');
+                    switchPage(page);
+                });
+            });
+            
+            // Navigation inférieure (mobile)
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const page = this.getAttribute('data-page');
+                    switchPage(page);
+                });
+            });
+        }
+        
+        // Fonction de connexion
+        function handleLogin() {
+            const matricule = matriculeInput.value.trim();
+            const password = passwordInput.value.trim();
+            
+            if (!matricule || !password) {
+                showLoginError("Veuillez saisir votre matricule et mot de passe");
+                return;
+            }
+            
+            // Simulation de chargement
+            loginBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Connexion...';
+            loginBtn.disabled = true;
+            
+            setTimeout(() => {
+                if (studentsData[matricule] && studentsData[matricule].password === password) {
+                    // Connexion réussie
+                    loginError.style.display = 'none';
+                    currentStudentId = matricule;
+                    currentStudentData = studentsData[matricule];
+                    loadStudentData(matricule);
+                    loginPage.classList.add('hidden');
+                    mainApp.classList.remove('hidden');
+                    switchPage('dashboard');
+                } else {
+                    showLoginError("Matricule ou mot de passe incorrect");
+                }
+                
+                // Réinitialiser le bouton
+                loginBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Se connecter';
+                loginBtn.disabled = false;
+            }, 800);
+        }
+        
+        // Fonction de déconnexion
+        function handleLogout() {
+            // Demander confirmation
+            if (confirm("Voulez-vous vraiment vous déconnecter ?")) {
+                currentStudentId = null;
+                currentStudentData = null;
+                matriculeInput.value = '';
+                passwordInput.value = '';
+                mainApp.classList.add('hidden');
+                loginPage.classList.remove('hidden');
+            }
+        }
+        
+        // Fonction d'affichage d'erreur de connexion
+        function showLoginError(message) {
+            loginError.textContent = message;
+            loginError.style.display = 'block';
+            
+            // Masquer l'erreur après 5 secondes
+            setTimeout(() => {
+                loginError.style.display = 'none';
+            }, 5000);
+        }
+        
+        // Fonction de chargement des données de l'étudiant
+        function loadStudentData(matricule) {
+            const student = studentsData[matricule];
+            
+            // Mettre à jour les informations de l'utilisateur
+            document.getElementById('userName').textContent = student.name;
+            document.getElementById('userClass').textContent = `${student.class} - ${student.specialty}`;
+            
+            document.getElementById('userAvatar').textContent = getInitials(student.name);
+            
+            // Mettre à jour le tableau de bord
+            document.getElementById('studentName').textContent = student.name;
+            document.getElementById('studentId').textContent = matricule;
+            document.getElementById('studentClass').textContent = student.class;
+            document.getElementById('studentSpecialty').textContent = student.specialty;
+            
+            document.getElementById('generalAverage').textContent = student.average + '/20';
+            document.getElementById('validatedSubjects').textContent = student.validated;
+            document.getElementById('successRate').textContent = student.successRate;
+            
+            // Mettre à jour le bulletin
+            document.getElementById('bulletinStudentName').textContent = student.name;
+            document.getElementById('bulletinStudentId').textContent = matricule;
+            document.getElementById('bulletinClass').textContent = student.class;
+            document.getElementById('bulletinSpecialty').textContent = student.specialty;
+            
+            document.getElementById('bulletinAverage').textContent = student.average + '/20';
+            document.getElementById('bulletinValidated').textContent = student.validated;
+            document.getElementById('bulletinSuccess').textContent = student.successRate;
+            
+            document.getElementById('bulletinRemarks').textContent = student.remarks;
+            
+            // Mettre à jour le profil
+            document.getElementById('profileName').textContent = student.name;
+            document.getElementById('profileId').textContent = matricule;
+            
+            // Mettre à jour les tables de notes
+            updateGradesTables(student.grades);
+            
+            // Générer le bulletin imprimable
+            generatePrintableBulletin(student, matricule);
+        }
+        
+        // Fonction pour obtenir les initiales d'un nom
+        function getInitials(name) {
+            return name.split(' ').map(part => part[0]).join('').toUpperCase().substring(0, 2);
+        }
+        
+        // Fonction pour mettre à jour les tables de notes
+        function updateGradesTables(grades) {
+            // Tableau de bord - dernières notes
+            const recentGradesTbody = document.getElementById('recentGrades');
+            recentGradesTbody.innerHTML = '';
+            
+            // Notes détaillées
+            const detailedGradesTbody = document.getElementById('detailedGrades');
+            detailedGradesTbody.innerHTML = '';
+            
+            // Bulletin scolaire
+            const bulletinGradesTbody = document.getElementById('bulletinGrades');
+            bulletinGradesTbody.innerHTML = '';
+            
+            // Remarques des professeurs
+            const teacherRemarksDiv = document.getElementById('teacherRemarks');
+            teacherRemarksDiv.innerHTML = '';
+            
+            grades.forEach(grade => {
+                // Pour le tableau de bord (dernières notes)
+                const recentRow = document.createElement('tr');
+                const gradeClass = grade.appreciation === 'Insuffisant' ? 'grade-bad' : 'grade-good';
+                
+                recentRow.innerHTML = `
+                    <td>${grade.subject}</td>
+                    <td>${grade.coefficient}</td>
+                    <td class="${gradeClass}">${grade.grade}/20</td>
+                    <td>${grade.appreciation}</td>
+                `;
+                recentGradesTbody.appendChild(recentRow);
+                
+                // Pour les notes détaillées
+                const detailedRow = document.createElement('tr');
+                detailedRow.innerHTML = `
+                    <td>${grade.subject}</td>
+                    <td>${grade.teacher}</td>
+                    <td>${grade.coefficient}</td>
+                    <td class="${gradeClass}">${grade.grade}/20</td>
+                    <td>${grade.status}</td>
+                `;
+                detailedGradesTbody.appendChild(detailedRow);
+                
+                // Pour le bulletin scolaire
+                const bulletinRow = document.createElement('tr');
+                bulletinRow.innerHTML = `
+                    <td>${grade.subject}</td>
+                    <td>${grade.teacher}</td>
+                    <td>${grade.coefficient}</td>
+                    <td>${grade.grade}/20</td>
+                    <td>${grade.appreciation}</td>
+                `;
+                bulletinGradesTbody.appendChild(bulletinRow);
+                
+                // Pour les remarques des professeurs
+                const remarkItem = document.createElement('div');
+                remarkItem.className = 'info-item';
+                remarkItem.innerHTML = `
+                    <span class="info-label">${grade.subject} (${grade.teacher})</span>
+                    <span class="info-value">${grade.appreciation}</span>
+                `;
+                teacherRemarksDiv.appendChild(remarkItem);
+            });
+        }
+        
+        // Fonction de changement de page
+        function switchPage(page) {
+            // Mettre à jour le titre de la page
+            const pageTitles = {
+                dashboard: "Tableau de bord",
+                grades: "Notes détaillées",
+                bulletin: "Bulletin scolaire",
+                profile: "Profil étudiant"
+            };
+            currentPageTitle.textContent = pageTitles[page];
+            
+            // Masquer toutes les pages
+            document.querySelectorAll('.page-content').forEach(el => {
+                el.classList.add('hidden');
+            });
+            
+            // Afficher la page sélectionnée
+            document.getElementById(`${page}Page`).classList.remove('hidden');
+            
+            // Mettre à jour la navigation active (mobile)
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.classList.remove('active');
+                if (item.getAttribute('data-page') === page) {
+                    item.classList.add('active');
+                }
+            });
+            
+            // Mettre à jour la navigation active (tablette)
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+                if (btn.getAttribute('data-page') === page) {
+                    btn.classList.add('active');
+                }
+            });
+            
+            currentPage = page;
+            
+            // Faire défiler vers le haut
+            document.querySelector('.main-content').scrollTop = 0;
+        }
+        
+        // Fonction pour générer le bulletin imprimable
+        function generatePrintableBulletin(student, matricule) {
+            const today = new Date();
+            const formattedDate = 
+                today.getDate().toString().padStart(2, '0') + '/' + 
+                (today.getMonth() + 1).toString().padStart(2, '0') + '/' + 
+                today.getFullYear();
+            
+            // Générer le contenu HTML pour l'impression
+            let gradesHTML = '';
+            student.grades.forEach(grade => {
+                gradesHTML += `
+                    <tr>
+                        <td>${grade.subject}</td>
+                        <td>${grade.teacher}</td>
+                        <td>${grade.coefficient}</td>
+                        <td>${grade.grade}/20</td>
+                        <td>${grade.appreciation}</td>
+                    </tr>
+                `;
+            });
+            
+            printableBulletin.innerHTML = `
+                <div class="print-header">
+                    <h1>BULLETIN DE NOTES</h1>
+                    <h2>Année Académique 2025-2026</h2>
+                    <p>EduManage Pro</p>
+                </div>
+                
+                <div class="print-info">
+                    <div class="print-info-section">
+                        <p><strong>Étudiant:</strong> ${student.name}</p>
+                        <p><strong>Matricule:</strong> ${matricule}</p>
+                    </div>
+                    <div class="print-info-section">
+                        <p><strong>Classe:</strong> ${student.class}</p>
+                        <p><strong>Spécialité:</strong> ${student.specialty}</p>
+                    </div>
+                </div>
+                
+                <div class="print-stats">
+                    <div class="print-stat">
+                        <div><strong>Moyenne Générale</strong></div>
+                        <div style="font-size: 20pt; font-weight: bold;">${student.average}/20</div>
+                    </div>
+                    <div class="print-stat">
+                        <div><strong>Matières Validées</strong></div>
+                        <div style="font-size: 20pt; font-weight: bold;">${student.validated}</div>
+                    </div>
+                    <div class="print-stat">
+                        <div><strong>Taux de Réussite</strong></div>
+                        <div style="font-size: 20pt; font-weight: bold;">${student.successRate}</div>
+                    </div>
+                </div>
+                
+                <h3>Détail des Notes</h3>
+                <table class="print-table">
+                    <thead>
+                        <tr>
+                            <th>Matière</th>
+                            <th>Professeur</th>
+                            <th>Coefficient</th>
+                            <th>Note</th>
+                            <th>Appréciation</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${gradesHTML}
+                    </tbody>
+                </table>
+                
+                <div class="print-remarks">
+                    <h4>Remarques:</h4>
+                    <p>${student.remarks}</p>
+                </div>
+                
+                <div class="print-footer">
+                    <p>Date d'émission: ${formattedDate}</p>
+                    <p>Signature du Directeur des Études</p>
+                    <p style="margin-top: 30px;">___________________________________</p>
+                </div>
+            `;
+        }
+        
+        // Fonction d'impression du bulletin
+        function printBulletin() {
+            if (!currentStudentData) {
+                alert("Veuillez d'abord vous connecter.");
+                return;
+            }
+            
+            const printBtn = document.getElementById('printBulletin');
+            const originalHTML = printBtn.innerHTML;
+            
+            // Afficher un indicateur de chargement
+            printBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Préparation...';
+            printBtn.disabled = true;
+            
+            // Générer le bulletin à jour
+            generatePrintableBulletin(currentStudentData, currentStudentId);
+            
+            // Attendre un peu pour que le contenu soit prêt, puis imprimer
+            setTimeout(() => {
+                // Créer une fenêtre d'impression
+                const printWindow = window.open('', '_blank');
+                printWindow.document.write(`
+                    <!DOCTYPE html>
+                    <html>
+                    <head>
+                        <title>Bulletin de Notes - ${currentStudentData.name}</title>
+                        <style>
+                            body { font-family: 'Times New Roman', Times, serif; margin: 0; padding: 20mm; color: #000; }
+                            .print-header { text-align: center; margin-bottom: 30px; border-bottom: 2px solid #000; padding-bottom: 15px; }
+                            .print-header h1 { font-size: 24pt; margin-bottom: 10px; }
+                            .print-header h2 { font-size: 16pt; margin-bottom: 5px; }
+                            .print-info { display: flex; justify-content: space-between; margin-bottom: 25px; }
+                            .print-info-section { width: 48%; }
+                            .print-stats { display: flex; justify-content: space-between; margin-bottom: 25px; text-align: center; }
+                            .print-stat { flex: 1; padding: 15px; border: 1px solid #000; margin: 0 5px; }
+                            .print-table { width: 100%; border-collapse: collapse; margin-bottom: 25px; }
+                            .print-table th, .print-table td { border: 1px solid #000; padding: 10px; text-align: center; }
+                            .print-table th { background-color: #f2f2f2; font-weight: bold; }
+                            .print-remarks { margin-top: 30px; padding: 15px; border: 1px solid #000; }
+                            .print-footer { margin-top: 40px; text-align: center; font-size: 10pt; }
+                            @media print {
+                                body { padding: 0; }
+                            }
+                        </style>
+                    </head>
+                    <body>
+                        ${printableBulletin.innerHTML}
+                        <script>
+                            window.onload = function() {
+                                window.print();
+                                setTimeout(function() {
+                                    window.close();
+                                }, 500);
+                            };
+                        <\/script>
+                    </body>
+                    </html>
+                `);
+                printWindow.document.close();
+                
+                // Réinitialiser le bouton
+                printBtn.innerHTML = '<i class="fas fa-print"></i> Imprimer';
+                printBtn.disabled = false;
+            }, 500);
+        }
+        
+        // Fonction pour télécharger le bulletin en PDF
+        async function downloadBulletinPDF() {
+            if (!currentStudentData) {
+                alert("Veuillez d'abord vous connecter.");
+                return;
+            }
+            
+            const downloadBtn = document.getElementById('downloadBulletin');
+            const originalHTML = downloadBtn.innerHTML;
+            
+            // Afficher un indicateur de chargement
+            downloadBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Génération PDF...';
+            downloadBtn.disabled = true;
+            
+            try {
+                // Générer le bulletin à jour
+                generatePrintableBulletin(currentStudentData, currentStudentId);
+                
+                // Attendre un peu pour que le contenu soit prêt
+                await new Promise(resolve => setTimeout(resolve, 300));
+                
+                // Utiliser html2canvas pour capturer le bulletin
+                const canvas = await html2canvas(printableBulletin, {
+                    scale: 2,
+                    useCORS: true,
+                    logging: false,
+                    backgroundColor: '#ffffff'
+                });
+                
+                // Convertir le canvas en image
+                const imgData = canvas.toDataURL('image/png');
+                
+                // Créer le PDF avec jsPDF
+                const { jsPDF } = window.jspdf;
+                const pdf = new jsPDF('p', 'mm', 'a4');
+                const pdfWidth = pdf.internal.pageSize.getWidth();
+                const pdfHeight = pdf.internal.pageSize.getHeight();
+                
+                // Calculer les dimensions de l'image pour qu'elle rentre dans la page
+                const imgWidth = canvas.width * 0.264583; // Convertir pixels en mm
+                const imgHeight = canvas.height * 0.264583;
+                const ratio = Math.min(pdfWidth / imgWidth, pdfHeight / imgHeight);
+                const finalWidth = imgWidth * ratio * 0.95;
+                const finalHeight = imgHeight * ratio * 0.95;
+                
+                // Ajouter l'image au PDF
+                pdf.addImage(imgData, 'PNG', 
+                    (pdfWidth - finalWidth) / 2, 
+                    10, 
+                    finalWidth, 
+                    finalHeight);
+                
+                // Télécharger le PDF
+                pdf.save(`Bulletin_${currentStudentData.name.replace(/\s+/g, '_')}_${currentStudentId}.pdf`);
+                
+                // Réinitialiser le bouton
+                downloadBtn.innerHTML = '<i class="fas fa-download"></i> Télécharger PDF';
+                downloadBtn.disabled = false;
+                
+            } catch (error) {
+                console.error("Erreur lors de la génération du PDF:", error);
+                alert("Une erreur est survenue lors de la génération du PDF. Veuillez réessayer.");
+                
+                // Réinitialiser le bouton
+                downloadBtn.innerHTML = '<i class="fas fa-download"></i> Télécharger PDF';
+                downloadBtn.disabled = false;
+            }
+        }
+        
+        // Gestion du clavier virtuel sur mobile
+        window.addEventListener('orientationchange', function() {
+            // Réajuster l'interface après rotation
+            setTimeout(handleResize, 300);
+        });
+    </script>
+</body>
+</html>

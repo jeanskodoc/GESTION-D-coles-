@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portail Universitaire</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+        }
+        
+        body {
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 15px;
+            background: url('univ.jpeg') center/cover no-repeat fixed;
+            position: relative;
+        }
+        
+        /* Overlay très léger */
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 10, 30, 0.2);
+            z-index: 0;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 320px;
+            text-align: center;
+            padding: 22px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px) saturate(180%);
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+            z-index: 1;
+            position: relative;
+        }
+        
+        h1 {
+            color: white;
+            margin-bottom: 22px;
+            font-size: 1.4rem;
+            font-weight: 700;
+            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+            line-height: 1.3;
+        }
+        
+        .buttons-container {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 8px;
+        }
+        
+        .btn {
+            padding: 10px 15px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            gap: 10px;
+            color: white;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.15);
+            height: 42px;
+            text-decoration: none;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.25);
+        }
+        
+        .btn:active {
+            transform: translateY(0);
+        }
+        
+        /* Couleurs compactes */
+        .btn-programme {
+            background: rgba(26, 95, 180, 0.85);
+            border-left: 3px solid rgba(255, 255, 255, 0.6);
+        }
+        
+        .btn-notes {
+            background: rgba(198, 70, 0, 0.85);
+            border-left: 3px solid rgba(255, 255, 255, 0.6);
+        }
+        
+        .btn-admin {
+            background: rgba(44, 161, 92, 0.85);
+            border-left: 3px solid rgba(255, 255, 255, 0.6);
+        }
+        
+        .btn-inscription {
+            background: rgba(125, 80, 180, 0.85);
+            border-left: 3px solid rgba(255, 255, 255, 0.6);
+        }
+        
+        /* Effets hover */
+        .btn-programme:hover {
+            background: rgba(26, 95, 180, 0.95);
+        }
+        
+        .btn-notes:hover {
+            background: rgba(198, 70, 0, 0.95);
+        }
+        
+        .btn-admin:hover {
+            background: rgba(44, 161, 92, 0.95);
+        }
+        
+        .btn-inscription:hover {
+            background: rgba(125, 80, 180, 0.95);
+        }
+        
+        .btn-icon {
+            font-size: 0.9rem;
+            width: 18px;
+            text-align: center;
+        }
+        
+        footer {
+            margin-top: 20px;
+            color: rgba(255, 255, 255, 0.75);
+            font-size: 0.7rem;
+            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+            line-height: 1.4;
+        }
+        
+        /* Flèche discrète pour liens */
+        .btn::after {
+            content: '›';
+            position: absolute;
+            right: 15px;
+            opacity: 0;
+            transition: all 0.2s ease;
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
+        
+        .btn:hover::after {
+            opacity: 0.8;
+            right: 12px;
+        }
+        
+        /* === RESPONSIVE DESIGN COMPLET === */
+        
+        /* Très petits smartphones (portrait) */
+        @media (max-width: 360px) {
+            .container {
+                padding: 18px 15px;
+                max-width: 96%;
+                border-radius: 14px;
+            }
+            
+            h1 {
+                font-size: 1.3rem;
+                margin-bottom: 18px;
+            }
+            
+            .btn {
+                padding: 9px 13px;
+                font-size: 0.82rem;
+                height: 40px;
+                border-radius: 9px;
+            }
+            
+            .btn-icon {
+                font-size: 0.85rem;
+                width: 16px;
+            }
+            
+            .buttons-container {
+                gap: 8px;
+            }
+            
+            footer {
+                font-size: 0.65rem;
+                margin-top: 16px;
+            }
+        }
+        
+        /* Smartphones moyens (portrait) */
+        @media (min-width: 361px) and (max-width: 480px) {
+            .container {
+                max-width: 94%;
+                padding: 20px 18px;
+            }
+            
+            h1 {
+                font-size: 1.35rem;
+            }
+        }
+        
+        /* Tablettes et petits écrans (portrait) */
+        @media (min-width: 481px) and (max-width: 768px) {
+            .container {
+                max-width: 340px;
+                padding: 24px;
+            }
+            
+            h1 {
+                font-size: 1.45rem;
+                margin-bottom: 24px;
+            }
+            
+            .btn {
+                height: 44px;
+                font-size: 0.87rem;
+            }
+        }
+        
+        /* Mode paysage sur mobile */
+        @media (max-height: 500px) and (orientation: landscape) {
+            body {
+                padding: 10px;
+                align-items: flex-start;
+                min-height: auto;
+            }
+            
+            .container {
+                max-width: 90%;
+                padding: 18px;
+                margin-top: 10px;
+            }
+            
+            .buttons-container {
+                flex-direction: row;
+                flex-wrap: wrap;
+                gap: 8px;
+            }
+            
+            .btn {
+                flex: 1;
+                min-width: 130px;
+                height: 40px;
+                padding: 9px 12px;
+                justify-content: center;
+            }
+            
+            h1 {
+                margin-bottom: 18px;
+                font-size: 1.3rem;
+            }
+            
+            .btn-icon {
+                display: none; /* Cache l'icône en mode paysage pour gagner de la place */
+            }
+            
+            footer {
+                margin-top: 15px;
+            }
+        }
+        
+        /* Tablettes (paysage) */
+        @media (min-width: 769px) and (max-width: 1024px) {
+            .container {
+                max-width: 360px;
+                padding: 26px;
+            }
+            
+            h1 {
+                font-size: 1.5rem;
+            }
+            
+            .btn {
+                height: 44px;
+            }
+        }
+        
+        /* Ordinateurs portables */
+        @media (min-width: 1025px) and (max-width: 1366px) {
+            .container {
+                max-width: 340px;
+            }
+        }
+        
+        /* Grands écrans d'ordinateur */
+        @media (min-width: 1367px) and (max-width: 1920px) {
+            .container {
+                max-width: 360px;
+                padding: 26px;
+            }
+            
+            .btn {
+                height: 44px;
+                font-size: 0.88rem;
+            }
+        }
+        
+        /* Écrans très larges */
+        @media (min-width: 1921px) {
+            .container {
+                max-width: 380px;
+                padding: 28px;
+            }
+            
+            h1 {
+                font-size: 1.6rem;
+                margin-bottom: 26px;
+            }
+            
+            .btn {
+                height: 46px;
+                font-size: 0.9rem;
+            }
+        }
+        
+        /* Animation subtile */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .container {
+            animation: fadeIn 0.4s ease-out;
+        }
+        
+        /* Indicateur de nouveau bouton (très discret) */
+        .new-indicator {
+            position: absolute;
+            top: -4px;
+            right: -4px;
+            width: 8px;
+            height: 8px;
+            background: rgba(255, 50, 50, 0.9);
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); opacity: 0.9; }
+            50% { transform: scale(1.2); opacity: 1; }
+            100% { transform: scale(1); opacity: 0.9; }
+        }
+        
+        /* Pour les préférences de mouvement réduit */
+        @media (prefers-reduced-motion: reduce) {
+            .container, .btn, .new-indicator {
+                animation: none;
+                transition: none;
+            }
+        }
+        
+        /* Mode sombre automatique */
+        @media (prefers-color-scheme: dark) {
+            .container {
+                background: rgba(0, 0, 0, 0.15);
+                border-color: rgba(255, 255, 255, 0.1);
+            }
+        }
+        
+        /* Très hautes résolutions (retina) */
+        @media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+            .container {
+                border-width: 0.5px;
+            }
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="overlay"></div>
+    
+    <div class="container">
+        <h1>Portail Universitaire</h1>
+        
+        <div class="buttons-container">
+            <a href="Programme.html" class="btn btn-programme">
+                <i class="btn-icon fas fa-calendar-alt"></i>
+                PROGRAMME
+            </a>
+            
+            <a href="Notes.html" class="btn btn-notes">
+                <i class="btn-icon fas fa-file-alt"></i>
+                NOTES
+            </a>
+            
+            <a href="Admin.html" class="btn btn-admin">
+                <i class="btn-icon fas fa-user-cog"></i>
+                ADMIN
+            </a>
+            
+            <a href="Inscription.html" class="btn btn-inscription">
+                <i class="btn-icon fas fa-user-plus"></i>
+                INSCRIPTION
+                <span class="new-indicator"></span>
+            </a>
+        </div>
+        
+        <footer>
+            <p>Cliquez sur un service pour y accéder</p>
+        </footer>
+    </div>
+
+    <script>
+        // Vérification de l'image de fond
+        window.addEventListener('load', function() {
+            const testImage = new Image();
+            testImage.src = 'univ.jpeg';
+            testImage.onerror = function() {
+                // Fond alternatif si image manquante
+                document.body.style.background = 'linear-gradient(135deg, #1a3a5f 0%, #2d7dd2 50%, #33d17a 100%)';
+                document.querySelector('.overlay').style.display = 'none';
+                console.info("Image 'univ.jpeg' non trouvée. Fond de substitution appliqué.");
+            };
+        });
+        
+        // Effet au clic sur les boutons
+        document.querySelectorAll('.btn').forEach(link => {
+            link.addEventListener('click', function(e) {
+                // Vérification rapide si le fichier existe (optionnel)
+                const fileUrl = this.getAttribute('href');
+                
+                // Effet visuel de clic
+                this.style.transform = 'scale(0.98)';
+                setTimeout(() => {
+                    this.style.transform = '';
+                }, 150);
+                
+                // Enregistrement dans la console
+                console.log(`Navigation vers: ${fileUrl}`);
+                
+                // Si vous voulez vérifier l'existence du fichier avant navigation:
+                // fetch(fileUrl, {method: 'HEAD'})
+                //     .then(response => {
+                //         if (!response.ok) {
+                //             e.preventDefault();
+                //             alert(`Le fichier ${fileUrl} n'existe pas encore.`);
+                //         }
+                //     })
+                //     .catch(() => {
+                //         e.preventDefault();
+                //         alert(`Le fichier ${fileUrl} n'existe pas encore.`);
+                //     });
+            });
+        });
+        
+        // Adaptation dynamique avancée
+        function adaptLayout() {
+            const container = document.querySelector('.container');
+            const screenWidth = window.innerWidth;
+            const screenHeight = window.innerHeight;
+            const isLandscape = screenWidth > screenHeight;
+            
+            // Adaptation pour très petits écrans
+            if (screenWidth < 300) {
+                container.style.maxWidth = '98%';
+                container.style.padding = '16px 12px';
+                
+                // Cacher les icônes pour gagner de la place
+                document.querySelectorAll('.btn-icon').forEach(icon => {
+                    icon.style.display = 'none';
+                });
+            }
+            
+            // Mode paysage sur mobile
+            if (isLandscape && screenHeight < 500) {
+                container.style.maxWidth = '96%';
+                
+                // Ajuster la grille des boutons
+                const buttonsContainer = document.querySelector('.buttons-container');
+                buttonsContainer.style.gridTemplateColumns = 'repeat(auto-fit, minmax(140px, 1fr))';
+                buttonsContainer.style.display = 'grid';
+                buttonsContainer.style.gap = '8px';
+            }
+            
+            // Grands écrans - réafficher les icônes
+            if (screenWidth > 480) {
+                document.querySelectorAll('.btn-icon').forEach(icon => {
+                    icon.style.display = 'block';
+                });
+            }
+        }
+        
+        // Exécuter au chargement et au redimensionnement
+        window.addEventListener('load', adaptLayout);
+        window.addEventListener('resize', adaptLayout);
+        window.addEventListener('orientationchange', adaptLayout);
+        
+        // Préchargement intelligent
+        if ('connection' in navigator && navigator.connection.saveData === false) {
+            const pages = ['Programme.html', 'Notes.html', 'Admin.html', 'Inscription.html'];
+            pages.forEach(page => {
+                const link = document.createElement('link');
+                link.rel = 'prefetch';
+                link.href = page;
+                document.head.appendChild(link);
+            });
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,873 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Planificateur Universitaire - Consultation Étudiante</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        :root {
+            --primary-color: #3498db;
+            --secondary-color: #2c3e50;
+            --success-color: #27ae60;
+            --danger-color: #e74c3c;
+            --warning-color: #f39c12;
+            --info-color: #9b59b6;
+            --light-color: #f5f7fa;
+            --dark-color: #2c3e50;
+            --gray-color: #7f8c8d;
+            --border-radius: 10px;
+            --box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+            --transition: all 0.3s ease;
+        }
+        
+        body {
+            background-color: var(--light-color);
+            color: var(--dark-color);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 15px;
+            width: 100%;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 25px;
+            padding: 20px;
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            color: white;
+            border-radius: var(--border-radius);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        
+        header h1 {
+            font-size: clamp(1.8rem, 4vw, 2.5rem);
+            margin-bottom: 10px;
+        }
+        
+        header p {
+            font-size: clamp(0.9rem, 2vw, 1.1rem);
+            opacity: 0.9;
+        }
+        
+        .selection-container {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 20px;
+            margin-bottom: 25px;
+        }
+        
+        @media (min-width: 768px) {
+            .selection-container {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+        
+        .selection-card {
+            background-color: white;
+            padding: 20px;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+        }
+        
+        .selection-card h2 {
+            margin-bottom: 15px;
+            color: var(--secondary-color);
+            padding-bottom: 10px;
+            border-bottom: 2px solid #f0f0f0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: clamp(1.2rem, 2.5vw, 1.5rem);
+        }
+        
+        .selection-card p {
+            margin-bottom: 15px;
+            color: var(--gray-color);
+            font-size: 0.95rem;
+        }
+        
+        .faculties, .levels {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 12px;
+            margin-top: 15px;
+        }
+        
+        @media (max-width: 480px) {
+            .faculties, .levels {
+                grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+            }
+        }
+        
+        .faculty-card, .level-card {
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            padding: 15px 10px;
+            text-align: center;
+            cursor: pointer;
+            transition: var(--transition);
+            border: 2px solid transparent;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .faculty-card:hover, .level-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .faculty-card.active, .level-card.active {
+            border-color: var(--primary-color);
+            background-color: #e8f4fc;
+        }
+        
+        .faculty-icon, .level-icon {
+            font-size: 1.8rem;
+            margin-bottom: 8px;
+        }
+        
+        .faculty-name, .level-name {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--secondary-color);
+            margin-bottom: 5px;
+        }
+        
+        .faculty-desc, .level-desc {
+            font-size: 0.75rem;
+            color: var(--gray-color);
+            line-height: 1.3;
+        }
+        
+        .student-controls {
+            background-color: white;
+            padding: 20px;
+            border-radius: var(--border-radius);
+            margin-bottom: 25px;
+            box-shadow: var(--box-shadow);
+        }
+        
+        .student-header {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            gap: 15px;
+        }
+        
+        @media (min-width: 768px) {
+            .student-header {
+                flex-direction: row;
+                align-items: center;
+            }
+        }
+        
+        .student-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .student-info .faculty-icon {
+            font-size: 1.8rem;
+            margin-bottom: 0;
+        }
+        
+        .student-title h3 {
+            color: var(--secondary-color);
+            margin-bottom: 5px;
+            font-size: clamp(1rem, 2vw, 1.2rem);
+        }
+        
+        .student-title p {
+            color: var(--gray-color);
+            font-size: 0.9rem;
+        }
+        
+        .week-navigation {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            gap: 15px;
+        }
+        
+        @media (min-width: 768px) {
+            .week-navigation {
+                flex-direction: row;
+            }
+        }
+        
+        .week-display {
+            font-size: clamp(1.1rem, 2.5vw, 1.3rem);
+            font-weight: 600;
+            color: var(--secondary-color);
+            text-align: center;
+        }
+        
+        .nav-btn {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.95rem;
+            transition: background-color 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .nav-btn:hover {
+            background-color: #2980b9;
+        }
+        
+        .timetable-container {
+            overflow-x: auto;
+            margin-bottom: 25px;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+        }
+        
+        .timetable {
+            display: grid;
+            grid-template-columns: 80px repeat(5, 1fr);
+            gap: 1px;
+            background-color: #ddd;
+            min-width: 800px;
+            width: 100%;
+        }
+        
+        @media (max-width: 768px) {
+            .timetable {
+                grid-template-columns: 60px repeat(5, 1fr);
+                min-width: 600px;
+            }
+        }
+        
+        .time-slot {
+            background-color: var(--secondary-color);
+            color: white;
+            padding: 12px 5px;
+            text-align: center;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.85rem;
+        }
+        
+        .day-header {
+            background-color: #34495e;
+            color: white;
+            padding: 12px 8px;
+            text-align: center;
+            font-weight: 700;
+            font-size: 0.95rem;
+        }
+        
+        .course-slot {
+            background-color: white;
+            padding: 10px;
+            min-height: 120px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            transition: transform 0.2s, box-shadow 0.2s;
+            border-bottom: 3px solid transparent;
+        }
+        
+        .course-slot:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
+        }
+        
+        .course-title {
+            font-weight: 700;
+            font-size: 0.95rem;
+            margin-bottom: 6px;
+            color: var(--secondary-color);
+            line-height: 1.3;
+        }
+        
+        .course-level {
+            display: inline-block;
+            font-size: 0.7rem;
+            padding: 2px 6px;
+            border-radius: 10px;
+            margin-bottom: 6px;
+            font-weight: 600;
+            color: white;
+        }
+        
+        .course-info-student {
+            margin-bottom: 4px;
+            display: flex;
+            align-items: center;
+            font-size: 0.8rem;
+        }
+        
+        .course-info-student i {
+            width: 16px;
+            color: var(--primary-color);
+            margin-right: 6px;
+            font-size: 0.8rem;
+        }
+        
+        .teacher {
+            color: var(--danger-color);
+            font-weight: 600;
+        }
+        
+        .room {
+            color: var(--success-color);
+            font-weight: 600;
+        }
+        
+        .course-link {
+            display: inline-block;
+            background-color: var(--primary-color);
+            color: white;
+            text-decoration: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            margin-top: 8px;
+            transition: background-color 0.3s;
+            text-align: center;
+        }
+        
+        .course-link:hover {
+            background-color: #2980b9;
+        }
+        
+        .empty-slot {
+            background-color: #f8f9fa;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #95a5a6;
+            font-style: italic;
+            font-size: 0.9rem;
+        }
+        
+        .course-type-1 { border-color: #9b59b6; }
+        .course-type-2 { border-color: #1abc9c; }
+        .course-type-3 { border-color: #f39c12; }
+        .course-type-4 { border-color: #e74c3c; }
+        .course-type-5 { border-color: #3498db; }
+        .course-type-6 { border-color: #e67e22; }
+        
+        .legend {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-top: 25px;
+        }
+        
+        @media (min-width: 768px) {
+            .legend {
+                flex-direction: row;
+                flex-wrap: wrap;
+                justify-content: center;
+                gap: 20px;
+            }
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            background-color: white;
+            padding: 8px 12px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+            font-size: 0.9rem;
+        }
+        
+        .color-sample {
+            width: 18px;
+            height: 18px;
+            border-radius: 3px;
+            margin-right: 8px;
+        }
+        
+        .no-data {
+            text-align: center;
+            padding: 30px 15px;
+            color: var(--gray-color);
+        }
+        
+        .no-data i {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+            color: #bdc3c7;
+        }
+        
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+            color: var(--gray-color);
+            font-size: 0.85rem;
+        }
+        
+        .admin-access-link {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+            text-align: center;
+        }
+        
+        .admin-access-link a {
+            color: var(--warning-color);
+            text-decoration: none;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .admin-access-link a:hover {
+            text-decoration: underline;
+        }
+        
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            text-align: center;
+        }
+        
+        .btn-faculty {
+            background-color: var(--info-color);
+            color: white;
+        }
+        
+        .btn-faculty:hover {
+            background-color: #8e44ad;
+        }
+        
+        .hidden {
+            display: none !important;
+        }
+        
+        .text-center {
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-user-graduate"></i> Planificateur Universitaire - Consultation Étudiante</h1>
+            <p>Consultez votre emploi du temps universitaire en fonction de votre faculté et niveau</p>
+        </header>
+        
+        <div class="selection-container">
+            <div class="selection-card">
+                <h2><i class="fas fa-graduation-cap"></i> Sélectionnez votre faculté</h2>
+                <p>Choisissez votre faculté pour voir l'emploi du temps correspondant.</p>
+                
+                <div class="faculties" id="faculties-container">
+                    <!-- Les facultés seront générées dynamiquement -->
+                </div>
+            </div>
+            
+            <div class="selection-card">
+                <h2><i class="fas fa-layer-group"></i> Sélectionnez votre niveau</h2>
+                <p>Choisissez votre niveau d'études (Licence ou Master).</p>
+                
+                <div class="levels" id="levels-container">
+                    <!-- Les niveaux seront générés dynamiquement -->
+                </div>
+            </div>
+        </div>
+        
+        <div class="student-controls">
+            <div class="student-header">
+                <div class="student-info">
+                    <div class="faculty-icon" id="student-faculty-icon">
+                        <i class="fas fa-university"></i>
+                    </div>
+                    <div class="student-title">
+                        <h3 id="student-faculty-name">Sélectionnez une faculté et un niveau</h3>
+                        <p id="student-faculty-desc">Veuillez choisir une faculté et un niveau pour afficher l'emploi du temps</p>
+                    </div>
+                </div>
+                <button class="btn btn-faculty" id="change-student-selection-btn">
+                    <i class="fas fa-exchange-alt"></i> Changer
+                </button>
+            </div>
+            
+            <div class="week-navigation">
+                <button class="nav-btn" id="prev-week">
+                    <i class="fas fa-chevron-left"></i> Semaine précédente
+                </button>
+                <div class="week-display" id="week-display">Semaine du 15 au 19 Janvier 2024</div>
+                <button class="nav-btn" id="next-week">
+                    Semaine suivante <i class="fas fa-chevron-right"></i>
+                </button>
+            </div>
+            
+            <div class="timetable-container">
+                <div id="timetable">
+                    <div class="no-data">
+                        <i class="fas fa-calendar-alt"></i>
+                        <p>Sélectionnez une faculté et un niveau pour afficher l'emploi du temps</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="legend" id="legend-container">
+                <!-- La légende sera générée dynamiquement -->
+            </div>
+        </div>
+        
+        <div class="admin-access-link">
+            <p>Vous êtes administrateur ?</p>
+            <a href="admin.html">
+                <i class="fas fa-user-shield"></i> Accéder à l'interface d'administration
+            </a>
+        </div>
+        
+        <div class="footer">
+            <p>Planificateur Universitaire - Consultation Étudiante &copy; 2024 - Tous droits réservés</p>
+            <p><i class="fas fa-info-circle"></i> Version 7.0 - Accès libre pour les étudiants</p>
+        </div>
+    </div>
+
+    <script>
+        let courses = [];
+        let faculties = [];
+        let levels = [];
+        let currentWeekOffset = 0;
+        let currentFacultyId = null;
+        let currentLevelId = null;
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeFaculties();
+            initializeLevels();
+            loadCoursesFromStorage();
+            loadFacultiesFromStorage();
+            displayFaculties();
+            displayLevels();
+            setupButtons();
+            updateWeekDisplay();
+        });
+        
+        function initializeFaculties() {
+            faculties = [
+                {id: 1, name: "Faculté des Sciences", description: "Informatique, Mathématiques, Physique", icon: "fas fa-flask", color: "#3498db", specializations: ["Informatique", "Mathématiques", "Physique", "Chimie", "Biologie"]},
+                {id: 2, name: "Faculté de Médecine", description: "Médecine, Pharmacie, Dentaire", icon: "fas fa-user-md", color: "#e74c3c", specializations: ["Médecine Générale", "Chirurgie", "Pédiatrie", "Pharmacie", "Dentaire"]},
+                {id: 3, name: "Faculté de Droit", description: "Droit civil, pénal, international", icon: "fas fa-gavel", color: "#2c3e50", specializations: ["Droit Civil", "Droit Pénal", "Droit International", "Droit des Affaires"]},
+                {id: 4, name: "Faculté des Lettres", description: "Littérature, Langues, Histoire", icon: "fas fa-book", color: "#9b59b6", specializations: ["Littérature", "Langues Étrangères", "Histoire", "Philosophie", "Linguistique"]},
+                {id: 5, name: "Faculté d'Économie", description: "Économie, Gestion, Finance", icon: "fas fa-chart-line", color: "#27ae60", specializations: ["Économie", "Gestion", "Commerce International", "Finance", "Marketing"]},
+                {id: 6, name: "Faculté d'Ingénierie", description: "Génie civil, électrique, mécanique", icon: "fas fa-cogs", color: "#f39c12", specializations: ["Génie Civil", "Génie Électrique", "Génie Mécanique", "Génie Informatique"]}
+            ];
+        }
+        
+        function initializeLevels() {
+            levels = [
+                {id: "L1", name: "Licence 1 (L1)", description: "Première année - Fondamentaux", icon: "fas fa-layer-group", color: "#1abc9c", semesters: ["Semestre 1", "Semestre 2"], credits: "60 ECTS", focus: "Acquisition des bases disciplinaires"},
+                {id: "L2", name: "Licence 2 (L2)", description: "Deuxième année - Approfondissement", icon: "fas fa-layer-group", color: "#2ecc71", semesters: ["Semestre 3", "Semestre 4"], credits: "60 ECTS", focus: "Approfondissement des connaissances"},
+                {id: "L3", name: "Licence 3 (L3)", description: "Troisième année - Spécialisation", icon: "fas fa-layer-group", color: "#3498db", semesters: ["Semestre 5", "Semestre 6"], credits: "60 ECTS", focus: "Spécialisation et projet de fin d'études"},
+                {id: "M1", name: "Master 1 (M1)", description: "Première année - Spécialisation avancée", icon: "fas fa-graduation-cap", color: "#9b59b6", semesters: ["Semestre 7", "Semestre 8"], credits: "60 ECTS", focus: "Spécialisation pointue et initiation à la recherche"},
+                {id: "M2", name: "Master 2 (M2)", description: "Deuxième année - Recherche ou Professionnel", icon: "fas fa-graduation-cap", color: "#e74c3c", semesters: ["Semestre 9", "Semestre 10"], credits: "60 ECTS", focus: "Recherche approfondie ou professionnalisation"}
+            ];
+        }
+        
+        function displayFaculties() {
+            const container = document.getElementById('faculties-container');
+            let html = '';
+            
+            faculties.forEach(faculty => {
+                html += `
+                <div class="faculty-card" data-id="${faculty.id}" style="border-color: ${faculty.color}">
+                    <div class="faculty-icon" style="color: ${faculty.color}">
+                        <i class="${faculty.icon}"></i>
+                    </div>
+                    <div class="faculty-name">${faculty.name}</div>
+                    <div class="faculty-desc">${faculty.description}</div>
+                </div>
+                `;
+            });
+            
+            container.innerHTML = html;
+            
+            document.querySelectorAll('.faculty-card').forEach(card => {
+                card.addEventListener('click', function() {
+                    const facultyId = parseInt(this.getAttribute('data-id'));
+                    selectFaculty(facultyId);
+                });
+            });
+        }
+        
+        function displayLevels() {
+            const container = document.getElementById('levels-container');
+            let html = '';
+            
+            levels.forEach(level => {
+                html += `
+                <div class="level-card" data-id="${level.id}" style="border-color: ${level.color}">
+                    <div class="level-icon" style="color: ${level.color}">
+                        <i class="${level.icon}"></i>
+                    </div>
+                    <div class="level-name">${level.name}</div>
+                    <div class="level-desc">${level.description}</div>
+                </div>
+                `;
+            });
+            
+            container.innerHTML = html;
+            
+            document.querySelectorAll('.level-card').forEach(card => {
+                card.addEventListener('click', function() {
+                    const levelId = this.getAttribute('data-id');
+                    selectLevel(levelId);
+                });
+            });
+        }
+        
+        function selectFaculty(facultyId) {
+            currentFacultyId = facultyId;
+            
+            document.querySelectorAll('.faculty-card').forEach(card => {
+                card.classList.remove('active');
+            });
+            document.querySelector(`.faculty-card[data-id="${facultyId}"]`).classList.add('active');
+            
+            checkSelectionComplete();
+        }
+        
+        function selectLevel(levelId) {
+            currentLevelId = levelId;
+            
+            document.querySelectorAll('.level-card').forEach(card => {
+                card.classList.remove('active');
+            });
+            document.querySelector(`.level-card[data-id="${levelId}"]`).classList.add('active');
+            
+            checkSelectionComplete();
+        }
+        
+        function checkSelectionComplete() {
+            if (currentFacultyId && currentLevelId) {
+                updateSelectionDisplay();
+                generateTimetable();
+            }
+        }
+        
+        function updateSelectionDisplay() {
+            const faculty = faculties.find(f => f.id === currentFacultyId);
+            const level = levels.find(l => l.id === currentLevelId);
+            
+            if (!faculty || !level) return;
+            
+            document.getElementById('student-faculty-name').textContent = `${faculty.name} - ${level.name}`;
+            document.getElementById('student-faculty-desc').textContent = `Emploi du temps pour ${level.description}`;
+            document.getElementById('student-faculty-icon').innerHTML = `<i class="${faculty.icon}"></i>`;
+            document.getElementById('student-faculty-icon').style.color = faculty.color;
+        }
+        
+        function generateTimetable() {
+            const container = document.getElementById('timetable');
+            const legendContainer = document.getElementById('legend-container');
+            
+            if (!currentFacultyId || !currentLevelId) {
+                container.innerHTML = '<div class="no-data"><i class="fas fa-university"></i><p>Veuillez sélectionner une faculté et un niveau pour voir l\'emploi du temps</p></div>';
+                legendContainer.innerHTML = '';
+                return;
+            }
+            
+            const filteredCourses = courses.filter(c => c.facultyId === currentFacultyId && c.levelId === currentLevelId);
+            
+            if (filteredCourses.length === 0) {
+                container.innerHTML = '<div class="no-data"><i class="fas fa-calendar-times"></i><p>Aucun cours programmé pour cette faculté et ce niveau.</p><p>Veuillez contacter l\'administration pour plus d\'informations.</p></div>';
+                legendContainer.innerHTML = '';
+                return;
+            }
+            
+            const days = ['Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi'];
+            const timeSlots = ['8h-10h', '10h-12h', '14h-16h', '16h-18h'];
+            
+            let html = '<div class="timetable">';
+            
+            html += '<div class="time-slot"></div>';
+            days.forEach(day => {
+                html += `<div class="day-header">${day}</div>`;
+            });
+            
+            timeSlots.forEach(timeSlot => {
+                html += `<div class="time-slot">${timeSlot.replace('-', ' - ')}</div>`;
+                
+                days.forEach(day => {
+                    const course = filteredCourses.find(c => c.day === day && c.time === timeSlot);
+                    
+                    if (course) {
+                        const typeClass = `course-type-${course.type}`;
+                        const typeColor = course.color || getTypeColor(course.type);
+                        const level = levels.find(l => l.id === course.levelId);
+                        
+                        html += `
+                        <div class="course-slot ${typeClass}" style="border-color: ${typeColor}">
+                            <div>
+                                <div class="course-level" style="background-color: ${level.color}">${course.levelId}</div>
+                                <div class="course-title">${course.name}</div>
+                                <div class="course-info-student">
+                                    <i class="fas fa-user"></i>
+                                    <span class="teacher">${course.teacher}</span>
+                                </div>
+                                <div class="course-info-student">
+                                    <i class="fas fa-map-marker-alt"></i>
+                                    <span class="room">${course.room}</span>
+                                </div>
+                            </div>
+                            ${course.link && course.link !== '#' ? 
+                            `<a href="${course.link}" class="course-link" target="_blank">
+                                <i class="fas fa-external-link-alt"></i> Ressources
+                            </a>` : ''}
+                        </div>
+                        `;
+                    } else {
+                        html += `<div class="empty-slot"><span>Pas de cours</span></div>`;
+                    }
+                });
+            });
+            
+            html += '</div>';
+            container.innerHTML = html;
+            
+            generateLegend();
+        }
+        
+        function generateLegend() {
+            const legendContainer = document.getElementById('legend-container');
+            const types = [
+                {id: 1, name: 'Cours Magistral (CM)', color: '#9b59b6'},
+                {id: 2, name: 'Travaux Pratiques (TP)', color: '#1abc9c'},
+                {id: 3, name: 'Travaux Dirigés (TD)', color: '#f39c12'},
+                {id: 4, name: 'Séminaire / Conférence', color: '#e74c3c'},
+                {id: 5, name: 'Laboratoire', color: '#3498db'},
+                {id: 6, name: 'Projet / Stage', color: '#e67e22'}
+            ];
+            
+            let html = '';
+            types.forEach(type => {
+                html += `
+                <div class="legend-item">
+                    <div class="color-sample" style="background-color: ${type.color}"></div>
+                    <span>${type.name}</span>
+                </div>
+                `;
+            });
+            
+            legendContainer.innerHTML = html;
+        }
+        
+        function setupButtons() {
+            document.getElementById('change-student-selection-btn').addEventListener('click', function() {
+                document.querySelectorAll('.faculty-card, .level-card').forEach(card => {
+                    card.classList.remove('active');
+                });
+                currentFacultyId = null;
+                currentLevelId = null;
+                document.getElementById('student-faculty-name').textContent = 'Sélectionnez une faculté et un niveau';
+                document.getElementById('student-faculty-desc').textContent = 'Veuillez choisir une faculté et un niveau pour afficher l\'emploi du temps';
+                document.getElementById('student-faculty-icon').innerHTML = '<i class="fas fa-university"></i>';
+                document.getElementById('student-faculty-icon').style.color = '';
+                
+                document.getElementById('timetable').innerHTML = '<div class="no-data"><i class="fas fa-calendar-alt"></i><p>Sélectionnez une faculté et un niveau pour afficher l\'emploi du temps</p></div>';
+                document.getElementById('legend-container').innerHTML = '';
+            });
+            
+            document.getElementById('prev-week').addEventListener('click', function() {
+                changeWeek(-1);
+            });
+            
+            document.getElementById('next-week').addEventListener('click', function() {
+                changeWeek(1);
+            });
+        }
+        
+        function changeWeek(direction) {
+            currentWeekOffset += direction;
+            updateWeekDisplay();
+        }
+        
+        function updateWeekDisplay() {
+            const today = new Date();
+            const monday = new Date(today);
+            
+            const day = today.getDay();
+            const diff = today.getDate() - day + (day === 0 ? -6 : 1);
+            monday.setDate(diff);
+            
+            monday.setDate(monday.getDate() + (currentWeekOffset * 7));
+            
+            const friday = new Date(monday);
+            friday.setDate(friday.getDate() + 4);
+            
+            const options = { day: 'numeric', month: 'long', year: 'numeric' };
+            const weekDisplay = document.getElementById('week-display');
+            weekDisplay.textContent = `Semaine du ${monday.toLocaleDateString('fr-FR', options)} au ${friday.toLocaleDateString('fr-FR', options)}`;
+            
+            document.getElementById('prev-week').disabled = currentWeekOffset === 0;
+        }
+        
+        function getTypeColor(type) {
+            const colors = {
+                '1': '#9b59b6',
+                '2': '#1abc9c',
+                '3': '#f39c12',
+                '4': '#e74c3c',
+                '5': '#3498db',
+                '6': '#e67e22'
+            };
+            
+            return colors[type] || '#3498db';
+        }
+        
+        function loadCoursesFromStorage() {
+            const saved = localStorage.getItem('university_courses_all');
+            if (saved) {
+                courses = JSON.parse(saved);
+            }
+        }
+        
+        function loadFacultiesFromStorage() {
+            const saved = localStorage.getItem('university_faculties_all');
+            if (saved) {
+                faculties = JSON.parse(saved);
+            }
+        }
+    </script>
+</body>
+</html>
