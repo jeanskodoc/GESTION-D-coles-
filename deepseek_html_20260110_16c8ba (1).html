@@ -1,0 +1,2255 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inscription Universitaire en Ligne</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        :root {
+            --primary-color: #3498db;
+            --secondary-color: #2c3e50;
+            --success-color: #27ae60;
+            --danger-color: #e74c3c;
+            --warning-color: #f39c12;
+            --info-color: #9b59b6;
+            --light-color: #f5f7fa;
+            --dark-color: #2c3e50;
+            --gray-color: #7f8c8d;
+            --border-radius: 10px;
+            --box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+            --transition: all 0.3s ease;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            color: var(--dark-color);
+            line-height: 1.6;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
+        }
+        
+        /* Header */
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 25px;
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            color: white;
+            border-radius: var(--border-radius);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+        }
+        
+        header h1 {
+            font-size: clamp(1.8rem, 4vw, 2.5rem);
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+        }
+        
+        header p {
+            font-size: clamp(0.9rem, 2vw, 1.1rem);
+            opacity: 0.9;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        /* Navigation entre étapes */
+        .steps-container {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 30px;
+            position: relative;
+        }
+        
+        .steps-container::before {
+            content: '';
+            position: absolute;
+            top: 20px;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background-color: #e0e0e0;
+            z-index: 1;
+        }
+        
+        .step {
+            flex: 1;
+            text-align: center;
+            position: relative;
+            z-index: 2;
+        }
+        
+        .step-number {
+            width: 40px;
+            height: 40px;
+            background-color: #e0e0e0;
+            color: var(--dark-color);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1.2rem;
+            margin: 0 auto 10px;
+            transition: var(--transition);
+        }
+        
+        .step.active .step-number {
+            background-color: var(--primary-color);
+            color: white;
+            transform: scale(1.1);
+        }
+        
+        .step.completed .step-number {
+            background-color: var(--success-color);
+            color: white;
+        }
+        
+        .step-label {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--gray-color);
+        }
+        
+        .step.active .step-label {
+            color: var(--primary-color);
+        }
+        
+        /* Formulaire principal */
+        .form-container {
+            background-color: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+        
+        .form-section {
+            display: none;
+            animation: fadeIn 0.5s;
+        }
+        
+        .form-section.active {
+            display: block;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        .section-title {
+            color: var(--secondary-color);
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #f0f0f0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: clamp(1.2rem, 2.5vw, 1.5rem);
+        }
+        
+        .section-title i {
+            color: var(--primary-color);
+        }
+        
+        /* Grille de formulaire */
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 20px;
+            margin-bottom: 25px;
+        }
+        
+        @media (min-width: 768px) {
+            .form-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--secondary-color);
+            font-size: 0.95rem;
+        }
+        
+        .form-group label.required::after {
+            content: " *";
+            color: var(--danger-color);
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 1rem;
+            transition: var(--transition);
+        }
+        
+        .form-control:focus {
+            border-color: var(--primary-color);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+        }
+        
+        .form-control.error {
+            border-color: var(--danger-color);
+            background-color: #ffe6e6;
+        }
+        
+        .error-message {
+            color: var(--danger-color);
+            font-size: 0.85rem;
+            margin-top: 5px;
+            display: none;
+        }
+        
+        /* Radio et Checkbox */
+        .radio-group, .checkbox-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-top: 10px;
+        }
+        
+        .radio-option, .checkbox-option {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+        }
+        
+        .radio-option input, .checkbox-option input {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+        }
+        
+        /* Sélection de filière */
+        .faculty-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+        
+        .faculty-card {
+            background-color: #f8f9fa;
+            border: 2px solid transparent;
+            border-radius: 8px;
+            padding: 20px;
+            cursor: pointer;
+            transition: var(--transition);
+            text-align: center;
+        }
+        
+        .faculty-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .faculty-card.selected {
+            border-color: var(--primary-color);
+            background-color: #e8f4fc;
+        }
+        
+        .faculty-icon {
+            font-size: 2.5rem;
+            color: var(--primary-color);
+            margin-bottom: 10px;
+        }
+        
+        .faculty-name {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--secondary-color);
+            margin-bottom: 8px;
+        }
+        
+        .faculty-desc {
+            font-size: 0.85rem;
+            color: var(--gray-color);
+            line-height: 1.4;
+        }
+        
+        /* Unités d'enseignement */
+        .ue-container {
+            margin-top: 25px;
+        }
+        
+        .ue-level {
+            margin-bottom: 30px;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            padding: 20px;
+            border-left: 4px solid var(--primary-color);
+        }
+        
+        .ue-level-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--secondary-color);
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .ue-level-title .credits {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+        }
+        
+        .ue-courses {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 15px;
+        }
+        
+        @media (min-width: 768px) {
+            .ue-courses {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        
+        @media (min-width: 992px) {
+            .ue-courses {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+        
+        .ue-course {
+            background-color: white;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            padding: 15px;
+            transition: var(--transition);
+        }
+        
+        .ue-course:hover {
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.08);
+        }
+        
+        .ue-course.selected {
+            border-color: var(--success-color);
+            background-color: #f0fff4;
+        }
+        
+        .ue-course-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 10px;
+        }
+        
+        .ue-course-code {
+            font-weight: 700;
+            color: var(--primary-color);
+            font-size: 0.9rem;
+        }
+        
+        .ue-course-credits {
+            background-color: var(--info-color);
+            color: white;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+        
+        .ue-course-title {
+            font-weight: 600;
+            color: var(--secondary-color);
+            margin-bottom: 8px;
+            font-size: 1rem;
+        }
+        
+        .ue-course-desc {
+            font-size: 0.85rem;
+            color: var(--gray-color);
+            margin-bottom: 10px;
+            line-height: 1.4;
+        }
+        
+        .ue-course-type {
+            display: inline-block;
+            font-size: 0.75rem;
+            padding: 3px 8px;
+            border-radius: 10px;
+            background-color: #f1f1f1;
+            color: var(--dark-color);
+            margin-right: 5px;
+        }
+        
+        .ue-course-checkbox {
+            margin-top: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        /* Résumé des crédits */
+        .credits-summary {
+            background-color: #e8f4fc;
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 25px;
+            border-left: 4px solid var(--primary-color);
+        }
+        
+        .credits-summary-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--secondary-color);
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .credits-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
+        }
+        
+        .credit-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 15px;
+            background-color: white;
+            border-radius: 6px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+        }
+        
+        .credit-label {
+            font-size: 0.9rem;
+            color: var(--gray-color);
+            margin-bottom: 5px;
+        }
+        
+        .credit-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+        
+        .credit-value.total {
+            color: var(--success-color);
+        }
+        
+        /* Navigation du formulaire */
+        .form-navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+        }
+        
+        .btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 5px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            text-align: center;
+        }
+        
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+        
+        .btn-primary {
+            background-color: var(--primary-color);
+            color: white;
+        }
+        
+        .btn-primary:hover:not(:disabled) {
+            background-color: #2980b9;
+        }
+        
+        .btn-secondary {
+            background-color: #6c757d;
+            color: white;
+        }
+        
+        .btn-secondary:hover:not(:disabled) {
+            background-color: #5a6268;
+        }
+        
+        .btn-success {
+            background-color: var(--success-color);
+            color: white;
+        }
+        
+        .btn-success:hover:not(:disabled) {
+            background-color: #219653;
+        }
+        
+        /* Modal de confirmation */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            padding: 15px;
+        }
+        
+        .modal-content {
+            background-color: white;
+            padding: 30px;
+            border-radius: var(--border-radius);
+            width: 100%;
+            max-width: 600px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+            animation: modalFadeIn 0.3s;
+        }
+        
+        @keyframes modalFadeIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .modal-title {
+            font-size: 1.5rem;
+            color: var(--secondary-color);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .close-modal {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--gray-color);
+        }
+        
+        .confirmation-details {
+            margin: 20px 0;
+        }
+        
+        .confirmation-item {
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        
+        .confirmation-label {
+            font-weight: 600;
+            color: var(--secondary-color);
+            margin-bottom: 5px;
+        }
+        
+        .confirmation-value {
+            color: var(--dark-color);
+        }
+        
+        .selected-courses-list {
+            max-height: 200px;
+            overflow-y: auto;
+            margin-top: 10px;
+            padding: 10px;
+            background-color: #f8f9fa;
+            border-radius: 5px;
+        }
+        
+        .selected-course-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        
+        .selected-course-item:last-child {
+            border-bottom: none;
+        }
+        
+        .modal-footer {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 25px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+        }
+        
+        /* Footer */
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #ddd;
+            color: var(--gray-color);
+            font-size: 0.9rem;
+        }
+        
+        /* Utilitaires */
+        .hidden {
+            display: none !important;
+        }
+        
+        .text-center {
+            text-align: center;
+        }
+        
+        .mt-3 {
+            margin-top: 15px;
+        }
+        
+        .mb-3 {
+            margin-bottom: 15px;
+        }
+        
+        .alert {
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .alert-info {
+            background-color: #e8f4fc;
+            border: 1px solid #b6e0fe;
+            color: #0c5460;
+        }
+        
+        .alert-warning {
+            background-color: #fff3cd;
+            border: 1px solid #ffeaa7;
+            color: #856404;
+        }
+        
+        /* Étape 5 - Paiement */
+        .payment-info {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 10px;
+            padding: 25px;
+            margin: 25px 0;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .payment-info h3 {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        
+        .payment-amount {
+            font-size: 2.5rem;
+            font-weight: 700;
+            text-align: center;
+            margin: 20px 0;
+        }
+        
+        .mastercard-details {
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 20px;
+        }
+        
+        .mastercard-details p {
+            margin: 8px 0;
+        }
+        
+        .whatsapp-confirmation {
+            background-color: #25D366;
+            color: white;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 20px 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        /* Nouveaux styles pour calcul des crédits */
+        .credits-calculator {
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 20px;
+            border-left: 4px solid #27ae60;
+        }
+        
+        .credits-calculator h4 {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 15px;
+            color: #2c3e50;
+        }
+        
+        .calculation-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px dashed #ddd;
+        }
+        
+        .calculation-item:last-child {
+            border-bottom: none;
+            font-weight: bold;
+            font-size: 1.1rem;
+            padding-top: 12px;
+            margin-top: 5px;
+            border-top: 2px solid #ddd;
+        }
+        
+        .calculation-label {
+            color: #555;
+        }
+        
+        .calculation-value {
+            font-weight: 600;
+            color: #2c3e50;
+        }
+        
+        .calculation-total {
+            color: #27ae60;
+            font-size: 1.2rem;
+        }
+        
+        .price-info {
+            display: inline-block;
+            background-color: #3498db;
+            color: white;
+            padding: 4px 10px;
+            border-radius: 15px;
+            font-size: 0.85rem;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-university"></i> Inscription Universitaire en Ligne</h1>
+            <p>Inscription pour nouveaux et anciens étudiants - Année Universitaire 2024/2025</p>
+        </header>
+        
+        <!-- Navigation par étapes (5 étapes) -->
+        <div class="steps-container">
+            <div class="step active" id="step1">
+                <div class="step-number">1</div>
+                <div class="step-label">Informations personnelles</div>
+            </div>
+            <div class="step" id="step2">
+                <div class="step-number">2</div>
+                <div class="step-label">Statut académique</div>
+            </div>
+            <div class="step" id="step3">
+                <div class="step-number">3</div>
+                <div class="step-label">Choix des UE</div>
+            </div>
+            <div class="step" id="step4">
+                <div class="step-number">4</div>
+                <div class="step-label">Confirmation</div>
+            </div>
+            <div class="step" id="step5">
+                <div class="step-number">5</div>
+                <div class="step-label">Paiement</div>
+            </div>
+        </div>
+        
+        <!-- Formulaire d'inscription -->
+        <div class="form-container">
+            <!-- Étape 1: Informations personnelles -->
+            <div class="form-section active" id="section1">
+                <h2 class="section-title"><i class="fas fa-user"></i> Informations personnelles</h2>
+                
+                <div class="alert alert-info">
+                    <i class="fas fa-info-circle"></i>
+                    Tous les champs marqués d'un astérisque (*) sont obligatoires.
+                </div>
+                
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="nom" class="required">Nom</label>
+                        <input type="text" id="nom" class="form-control" placeholder="Votre nom" required>
+                        <div class="error-message" id="nom-error">Veuillez entrer votre nom</div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="prenom" class="required">Prénom</label>
+                        <input type="text" id="prenom" class="form-control" placeholder="Votre prénom" required>
+                        <div class="error-message" id="prenom-error">Veuillez entrer votre prénom</div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="date-naissance" class="required">Date de naissance</label>
+                        <input type="date" id="date-naissance" class="form-control" required>
+                        <div class="error-message" id="date-naissance-error">Veuillez entrer votre date de naissance</div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="lieu-naissance" class="required">Lieu de naissance</label>
+                        <input type="text" id="lieu-naissance" class="form-control" placeholder="Ville de naissance" required>
+                        <div class="error-message" id="lieu-naissance-error">Veuillez entrer votre lieu de naissance</div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="nationalite" class="required">Nationalité</label>
+                        <input type="text" id="nationalite" class="form-control" placeholder="Votre nationalité" required>
+                        <div class="error-message" id="nationalite-error">Veuillez entrer votre nationalité</div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="cin" class="required">Numéro CIN/Passeport</label>
+                        <input type="text" id="cin" class="form-control" placeholder="Votre numéro CIN ou passeport" required>
+                        <div class="error-message" id="cin-error">Veuillez entrer votre numéro CIN ou passeport</div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="email" class="required">Adresse email</label>
+                        <input type="email" id="email" class="form-control" placeholder="exemple@email.com" required>
+                        <div class="error-message" id="email-error">Veuillez entrer une adresse email valide</div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="telephone" class="required">Téléphone</label>
+                        <input type="tel" id="telephone" class="form-control" placeholder="Votre numéro de téléphone" required>
+                        <div class="error-message" id="telephone-error">Veuillez entrer votre numéro de téléphone</div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="adresse" class="required">Adresse</label>
+                        <textarea id="adresse" class="form-control" rows="3" placeholder="Votre adresse complète" required></textarea>
+                        <div class="error-message" id="adresse-error">Veuillez entrer votre adresse</div>
+                    </div>
+                </div>
+                
+                <div class="form-navigation">
+                    <button class="btn btn-secondary" disabled>Précédent</button>
+                    <button class="btn btn-primary" id="next1">Suivant</button>
+                </div>
+            </div>
+            
+            <!-- Étape 2: Statut académique -->
+            <div class="form-section" id="section2">
+                <h2 class="section-title"><i class="fas fa-graduation-cap"></i> Statut académique</h2>
+                
+                <div class="alert alert-info">
+                    <i class="fas fa-info-circle"></i>
+                    Veuillez sélectionner votre statut académique et votre filière.
+                </div>
+                
+                <div class="form-group">
+                    <label class="required">Statut étudiant</label>
+                    <div class="radio-group">
+                        <div class="radio-option">
+                            <input type="radio" id="nouveau" name="statut" value="nouveau" checked>
+                            <label for="nouveau">Nouvel étudiant (Première inscription)</label>
+                        </div>
+                        <div class="radio-option">
+                            <input type="radio" id="ancien" name="statut" value="ancien">
+                            <label for="ancien">Ancien étudiant (Réinscription)</label>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-group" id="num-etudiant-group" style="display: none;">
+                    <label for="num-etudiant" class="required">Numéro d'étudiant</label>
+                    <input type="text" id="num-etudiant" class="form-control" placeholder="Votre numéro d'étudiant">
+                    <div class="error-message" id="num-etudiant-error">Veuillez entrer votre numéro d'étudiant</div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="niveau" class="required">Niveau d'études</label>
+                    <select id="niveau" class="form-control" required>
+                        <option value="">Sélectionnez votre niveau</option>
+                        <option value="L1">Licence 1 (L1)</option>
+                        <option value="L2">Licence 2 (L2)</option>
+                        <option value="L3">Licence 3 (L3)</option>
+                        <option value="M1">Master 1 (M1)</option>
+                        <option value="M2">Master 2 (M2)</option>
+                    </select>
+                    <div class="error-message" id="niveau-error">Veuillez sélectionner votre niveau d'études</div>
+                </div>
+                
+                <div class="form-group">
+                    <label class="required">Sélectionnez votre faculté</label>
+                    <div class="faculty-cards">
+                        <div class="faculty-card" data-faculty="1">
+                            <div class="faculty-icon">
+                                <i class="fas fa-flask"></i>
+                            </div>
+                            <div class="faculty-name">Faculté des Sciences</div>
+                            <div class="faculty-desc">Informatique, Mathématiques, Physique, Chimie, Biologie</div>
+                        </div>
+                        
+                        <div class="faculty-card" data-faculty="2">
+                            <div class="faculty-icon">
+                                <i class="fas fa-user-md"></i>
+                            </div>
+                            <div class="faculty-name">Faculté de Médecine</div>
+                            <div class="faculty-desc">Médecine, Pharmacie, Dentaire, Kinésithérapie</div>
+                        </div>
+                        
+                        <div class="faculty-card" data-faculty="3">
+                            <div class="faculty-icon">
+                                <i class="fas fa-gavel"></i>
+                            </div>
+                            <div class="faculty-name">Faculté de Droit</div>
+                            <div class="faculty-desc">Droit civil, pénal, international, des affaires</div>
+                        </div>
+                        
+                        <div class="faculty-card" data-faculty="4">
+                            <div class="faculty-icon">
+                                <i class="fas fa-book"></i>
+                            </div>
+                            <div class="faculty-name">Faculté des Lettres</div>
+                            <div class="faculty-desc">Littérature, Langues, Histoire, Philosophie</div>
+                        </div>
+                        
+                        <div class="faculty-card" data-faculty="5">
+                            <div class="faculty-icon">
+                                <i class="fas fa-chart-line"></i>
+                            </div>
+                            <div class="faculty-name">Faculté d'Économie</div>
+                            <div class="faculty-desc">Économie, Gestion, Commerce, Finance, Marketing</div>
+                        </div>
+                        
+                        <div class="faculty-card" data-faculty="6">
+                            <div class="faculty-icon">
+                                <i class="fas fa-cogs"></i>
+                            </div>
+                            <div class="faculty-name">Faculté d'Ingénierie</div>
+                            <div class="faculty-desc">Génie civil, électrique, mécanique, informatique</div>
+                        </div>
+                    </div>
+                    <input type="hidden" id="faculte" required>
+                    <div class="error-message" id="faculte-error">Veuillez sélectionner une faculté</div>
+                </div>
+                
+                <div class="form-navigation">
+                    <button class="btn btn-secondary" id="prev2">Précédent</button>
+                    <button class="btn btn-primary" id="next2">Suivant</button>
+                </div>
+            </div>
+            
+            <!-- Étape 3: Unités d'enseignement -->
+            <div class="form-section" id="section3">
+                <h2 class="section-title"><i class="fas fa-book-open"></i> Choix des Unités d'Enseignement (UE)</h2>
+                
+                <div class="alert alert-info">
+                    <i class="fas fa-info-circle"></i>
+                    Sélectionnez les Unités d'Enseignement (UE) pour votre niveau. Les crédits ECTS sont indiqués pour chaque UE.
+                </div>
+                
+                <div class="ue-container" id="ue-container">
+                    <div class="text-center" id="loading-ue">
+                        <i class="fas fa-spinner fa-spin"></i> Chargement des Unités d'Enseignement...
+                    </div>
+                </div>
+                
+                <div class="credits-summary">
+                    <h3 class="credits-summary-title"><i class="fas fa-calculator"></i> Résumé des crédits</h3>
+                    
+                    <div class="price-info">
+                        <i class="fas fa-money-bill-wave"></i> Prix du crédit : 50 FCFA
+                    </div>
+                    
+                    <div class="credits-details">
+                        <div class="credit-item">
+                            <div class="credit-label">UE Obligatoires</div>
+                            <div class="credit-value" id="credits-obligatoires">0</div>
+                        </div>
+                        <div class="credit-item">
+                            <div class="credit-label">UE Optionnelles</div>
+                            <div class="credit-value" id="credits-optionnelles">0</div>
+                        </div>
+                        <div class="credit-item">
+                            <div class="credit-label">UE Libre</div>
+                            <div class="credit-value" id="credits-libre">0</div>
+                        </div>
+                        <div class="credit-item">
+                            <div class="credit-label">Total crédits</div>
+                            <div class="credit-value total" id="credits-total">0</div>
+                        </div>
+                    </div>
+                    
+                    <div class="credits-calculator">
+                        <h4><i class="fas fa-calculator"></i> Calcul du coût des crédits</h4>
+                        <div class="calculation-item">
+                            <span class="calculation-label">Total crédits ECTS :</span>
+                            <span class="calculation-value" id="calc-total-credits">0</span>
+                        </div>
+                        <div class="calculation-item">
+                            <span class="calculation-label">Prix par crédit :</span>
+                            <span class="calculation-value">50 FCFA</span>
+                        </div>
+                        <div class="calculation-item">
+                            <span class="calculation-label">Coût des crédits :</span>
+                            <span class="calculation-value" id="calc-cout-credits">0 FCFA</span>
+                        </div>
+                        <div class="calculation-item">
+                            <span class="calculation-label">Frais d'inscription :</span>
+                            <span class="calculation-value">10 000 FCFA</span>
+                        </div>
+                        <div class="calculation-item">
+                            <span class="calculation-label">Frais administratifs :</span>
+                            <span class="calculation-value">3 000 FCFA</span>
+                        </div>
+                        <div class="calculation-item">
+                            <span class="calculation-label">Frais technologiques :</span>
+                            <span class="calculation-value">2 000 FCFA</span>
+                        </div>
+                        <div class="calculation-item">
+                            <span class="calculation-label">Total avant frais de recharge :</span>
+                            <span class="calculation-value calculation-total" id="calc-total-avant-recharge">0 FCFA</span>
+                        </div>
+                    </div>
+                    
+                    <div class="alert alert-warning mt-3" id="credits-warning" style="display: none;">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <span id="warning-text">Vous devez sélectionner au moins 30 crédits ECTS pour valider votre inscription.</span>
+                    </div>
+                </div>
+                
+                <div class="form-navigation">
+                    <button class="btn btn-secondary" id="prev3">Précédent</button>
+                    <button class="btn btn-primary" id="next3">Suivant</button>
+                </div>
+            </div>
+            
+            <!-- Étape 4: Confirmation -->
+            <div class="form-section" id="section4">
+                <h2 class="section-title"><i class="fas fa-check-circle"></i> Confirmation de l'inscription</h2>
+                
+                <div class="alert alert-info">
+                    <i class="fas fa-info-circle"></i>
+                    Veuillez vérifier toutes les informations avant de soumettre votre inscription.
+                </div>
+                
+                <div class="confirmation-details">
+                    <div class="confirmation-item">
+                        <div class="confirmation-label">Informations personnelles</div>
+                        <div class="confirmation-value" id="confirmation-personnelles">
+                            <!-- Rempli dynamiquement -->
+                        </div>
+                    </div>
+                    
+                    <div class="confirmation-item">
+                        <div class="confirmation-label">Statut académique</div>
+                        <div class="confirmation-value" id="confirmation-academique">
+                            <!-- Rempli dynamiquement -->
+                        </div>
+                    </div>
+                    
+                    <div class="confirmation-item">
+                        <div class="confirmation-label">Unités d'Enseignement sélectionnées</div>
+                        <div class="selected-courses-list" id="confirmation-courses">
+                            <!-- Rempli dynamiquement -->
+                        </div>
+                    </div>
+                    
+                    <div class="confirmation-item">
+                        <div class="confirmation-label">Résumé financier</div>
+                        <div class="confirmation-value" id="confirmation-financier">
+                            <!-- Rempli dynamiquement -->
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <div class="checkbox-option">
+                        <input type="checkbox" id="conditions" required>
+                        <label for="conditions" class="required">Je déclare sur l'honneur que les informations fournies sont exactes et j'accepte les conditions générales d'inscription.</label>
+                    </div>
+                    <div class="error-message" id="conditions-error">Vous devez accepter les conditions</div>
+                </div>
+                
+                <div class="form-navigation">
+                    <button class="btn btn-secondary" id="prev4">Précédent</button>
+                    <button class="btn btn-success" id="submit-inscription">Soumettre l'inscription</button>
+                </div>
+            </div>
+            
+            <!-- ÉTAPE 5 : Paiement (NOUVELLE ÉTAPE) -->
+            <div class="form-section" id="section5">
+                <h2 class="section-title"><i class="fas fa-credit-card"></i> Paiement des frais d'inscription</h2>
+                
+                <div class="whatsapp-confirmation" id="whatsapp-confirmation" style="display: none;">
+                    <i class="fab fa-whatsapp"></i>
+                    <div>
+                        <strong>WhatsApp envoyé !</strong>
+                        <p>Les détails de votre inscription ont été envoyés au +22892871605</p>
+                    </div>
+                </div>
+                
+                <div class="payment-info">
+                    <h3><i class="fas fa-lock"></i> Paiement sécurisé</h3>
+                    <p>Veuillez finaliser votre inscription en payant les frais universitaires via le portefeuille MasterCard.</p>
+                    
+                    <div class="payment-amount" id="montant-paiement">15 000 FCFA</div>
+                    
+                    <div class="mastercard-details">
+                        <p><strong><i class="fas fa-user"></i> Titulaire du compte:</strong> KOLA Maniwah Essohouna</p>
+                        <p><strong><i class="fas fa-id-card"></i> Numéro de compte:</strong> TG-2024-KM01</p>
+                        <p><strong><i class="fas fa-phone"></i> Téléphone:</strong> +228 93 38 75 95</p>
+                        <p><strong><i class="fas fa-info-circle"></i> Frais de recharge:</strong> 10% (déduits automatiquement)</p>
+                    </div>
+                </div>
+                
+                <div class="confirmation-details">
+                    <div class="confirmation-item">
+                        <div class="confirmation-label">Numéro d'inscription</div>
+                        <div class="confirmation-value" id="paiement-numero">UC-2024-XXXXX</div>
+                    </div>
+                    
+                    <div class="confirmation-item">
+                        <div class="confirmation-label">Détails du paiement</div>
+                        <div class="confirmation-value" id="paiement-details">
+                            <!-- Rempli dynamiquement -->
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="alert alert-warning">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <strong>Important :</strong> Le paiement doit être effectué dans les 24 heures pour valider définitivement votre inscription.
+                </div>
+                
+                <div class="form-navigation">
+                    <button class="btn btn-secondary" id="prev5">Précédent</button>
+                    <a href="https://jeanskodoc.github.io/-CONOMIE-/mastercard.html" 
+                       target="_blank" 
+                       class="btn btn-success" 
+                       id="payer-mastercard">
+                        <i class="fas fa-lock"></i> Payer via MasterCard
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <p>Université Excellence &copy; 2024 - Service des inscriptions</p>
+            <p><i class="fas fa-phone"></i> Contact: +228 5 XX XX XX XX | <i class="fas fa-envelope"></i> inscriptions@univ-excellence.ma</p>
+            <p><i class="fab fa-whatsapp"></i> WhatsApp: +228 92 87 16 05 (confirmation d'inscription)</p>
+        </div>
+    </div>
+    
+    <!-- Modal de confirmation finale -->
+    <div id="confirmation-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title"><i class="fas fa-check-circle"></i> Inscription sauvegardée !</h3>
+                <button class="close-modal">&times;</button>
+            </div>
+            
+            <div class="confirmation-details">
+                <div style="text-align: center; margin: 20px 0;">
+                    <i class="fas fa-check-circle" style="font-size: 4rem; color: #27ae60;"></i>
+                    <h3 style="margin: 15px 0; color: #2c3e50;">Félicitations !</h3>
+                    <p>Votre inscription a été sauvegardée et envoyée par WhatsApp.</p>
+                </div>
+                
+                <div class="confirmation-item">
+                    <div class="confirmation-label">Numéro d'inscription</div>
+                    <div class="confirmation-value" id="numero-inscription">UC-2024-XXXXX</div>
+                </div>
+                
+                <div class="confirmation-item">
+                    <div class="confirmation-label">Date d'inscription</div>
+                    <div class="confirmation-value" id="date-inscription"></div>
+                </div>
+                
+                <div class="confirmation-item">
+                    <div class="confirmation-label">Détails financiers</div>
+                    <div class="confirmation-value" id="modal-financial-details">
+                        <!-- Rempli dynamiquement -->
+                    </div>
+                </div>
+                
+                <div class="confirmation-item">
+                    <div class="confirmation-label">Prochaines étapes</div>
+                    <div class="confirmation-value">
+                        <ul style="margin-left: 20px;">
+                            <li>Payez les frais d'inscription via MasterCard</li>
+                            <li>Vous recevrez une confirmation de paiement par WhatsApp</li>
+                            <li>Les cours commencent le 1er octobre 2024</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="modal-footer">
+                <button class="btn btn-primary" id="print-inscription">
+                    <i class="fas fa-print"></i> Imprimer
+                </button>
+                <button class="btn btn-success" id="close-modal">
+                    <i class="fas fa-check"></i> Terminer
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ==============================================
+        // CONSTANTES DE TARIFICATION
+        // ==============================================
+        const PRIX_CREDIT = 50; // 50 FCFA par crédit ECTS
+        const FRAIS_INSCRIPTION = 10000; // Frais d'inscription de base
+        const FRAIS_ADMINISTRATIFS = 3000; // Frais administratifs
+        const FRAIS_TECHNOLOGIQUES = 2000; // Frais technologiques
+        const TAUX_RECHARGE = 0.10; // 10% de frais de recharge MasterCard
+        
+        // Données des Unités d'Enseignement par faculté et niveau (COMPLÉTÉES)
+        const ueData = {
+            1: {
+                "L1": {
+                    obligatoires: [
+                        {code: "SCI-L1-101", titre: "Mathématiques Fondamentales", credits: 6, description: "Algèbre linéaire, calcul différentiel et intégral", type: "CM"},
+                        {code: "SCI-L1-102", titre: "Physique Générale", credits: 6, description: "Mécanique, thermodynamique, électromagnétisme", type: "CM"},
+                        {code: "SCI-L1-103", titre: "Informatique de Base", credits: 5, description: "Algorithmique et programmation", type: "CM/TP"},
+                        {code: "SCI-L1-104", titre: "Chimie Générale", credits: 5, description: "Structure de la matière, réactions chimiques", type: "CM/TP"},
+                        {code: "SCI-L1-105", titre: "Biologie Cellulaire", credits: 4, description: "Structure et fonctionnement de la cellule", type: "CM"}
+                    ],
+                    optionnelles: [
+                        {code: "SCI-L1-201", titre: "Mathématiques Appliquées", credits: 4, description: "Applications des mathématiques en sciences", type: "CM/TD"},
+                        {code: "SCI-L1-202", titre: "Initiation à la Programmation", credits: 4, description: "Programmation Python et structures de données", type: "TP"},
+                        {code: "SCI-L1-203", titre: "Physique Expérimentale", credits: 4, description: "Manipulations et mesures physiques", type: "TP"},
+                        {code: "SCI-L1-204", titre: "Géologie de Base", credits: 3, description: "Introduction aux sciences de la Terre", type: "CM"},
+                        {code: "SCI-L1-205", titre: "Statistiques Descriptives", credits: 3, description: "Méthodes statistiques pour les sciences", type: "CM/TD"}
+                    ],
+                    libre: [
+                        {code: "SCI-L1-L01", titre: "Anglais Scientifique", credits: 2, description: "Anglais technique et scientifique", type: "TD"},
+                        {code: "SCI-L1-L02", titre: "Méthodologie de Travail Universitaire", credits: 2, description: "Techniques de recherche et rédaction", type: "TD"},
+                        {code: "SCI-L1-L03", titre: "Communication Scientifique", credits: 2, description: "Présentation de travaux scientifiques", type: "TD"}
+                    ]
+                },
+                "L2": {
+                    obligatoires: [
+                        {code: "SCI-L2-101", titre: "Analyse Mathématique", credits: 6, description: "Suites, séries, fonctions de plusieurs variables", type: "CM"},
+                        {code: "SCI-L2-102", titre: "Physique Quantique", credits: 6, description: "Introduction à la physique quantique", type: "CM"},
+                        {code: "SCI-L2-103", titre: "Algorithmique Avancée", credits: 5, description: "Structures de données et complexité", type: "CM/TP"},
+                        {code: "SCI-L2-104", titre: "Chimie Organique", credits: 5, description: "Structure et réactivité des molécules organiques", type: "CM/TP"},
+                        {code: "SCI-L2-105", titre: "Biologie Moléculaire", credits: 4, description: "ADN, ARN, protéines et génétique", type: "CM"}
+                    ],
+                    optionnelles: [
+                        {code: "SCI-L2-201", titre: "Calcul Scientifique", credits: 4, description: "Méthodes numériques et simulation", type: "CM/TP"},
+                        {code: "SCI-L2-202", titre: "Base de Données", credits: 4, description: "Conception et gestion de bases de données", type: "CM/TP"},
+                        {code: "SCI-L2-203", titre: "Électronique Fondamentale", credits: 4, description: "Composants et circuits électroniques", type: "CM/TP"},
+                        {code: "SCI-L2-204", titre: "Biochimie", credits: 4, description: "Chimie des processus biologiques", type: "CM/TP"},
+                        {code: "SCI-L2-205", titre: "Probabilités et Statistiques", credits: 4, description: "Théorie des probabilités appliquée", type: "CM/TD"}
+                    ],
+                    libre: [
+                        {code: "SCI-L2-L01", titre: "Anglais Avancé", credits: 3, description: "Anglais académique et scientifique", type: "TD"},
+                        {code: "SCI-L2-L02", titre: "Projet de Recherche", credits: 3, description: "Initiation à la recherche scientifique", type: "Projet"},
+                        {code: "SCI-L2-L03", titre: "Éthique et Déontologie Scientifique", credits: 2, description: "Enjeux éthiques de la recherche", type: "CM"}
+                    ]
+                },
+                "L3": {
+                    obligatoires: [
+                        {code: "SCI-L3-101", titre: "Analyse Complexe", credits: 6, description: "Fonctions complexes, intégrales de contour", type: "CM"},
+                        {code: "SCI-L3-102", titre: "Physique des Matériaux", credits: 6, description: "Propriétés et structure des matériaux", type: "CM"},
+                        {code: "SCI-L3-103", titre: "Intelligence Artificielle", credits: 5, description: "Algorithmes d'IA et apprentissage automatique", type: "CM/TP"},
+                        {code: "SCI-L3-104", titre: "Chimie Analytique", credits: 5, description: "Méthodes d'analyse chimique", type: "CM/TP"},
+                        {code: "SCI-L3-105", titre: "Génétique des Populations", credits: 4, description: "Dynamique des gènes dans les populations", type: "CM"}
+                    ],
+                    optionnelles: [
+                        {code: "SCI-L3-201", titre: "Mathématiques pour l'Ingénieur", credits: 4, description: "Applications mathématiques en ingénierie", type: "CM/TD"},
+                        {code: "SCI-L3-202", titre: "Réseaux Informatiques", credits: 4, description: "Architecture et protocoles réseau", type: "CM/TP"},
+                        {code: "SCI-L3-203", titre: "Optique Physique", credits: 4, description: "Phénomènes optiques et applications", type: "CM/TP"},
+                        {code: "SCI-L3-204", titre: "Bioinformatique", credits: 4, description: "Informatique appliquée à la biologie", type: "CM/TP"},
+                        {code: "SCI-L3-205", titre: "Statistiques Inférentielles", credits: 4, description: "Tests d'hypothèses et inférence", type: "CM/TD"}
+                    ],
+                    libre: [
+                        {code: "SCI-L3-L01", titre: "Anglais Professionnel", credits: 3, description: "Anglais pour le milieu professionnel", type: "TD"},
+                        {code: "SCI-L3-L02", titre: "Projet de Fin d'Études", credits: 6, description: "Projet de recherche en sciences", type: "Projet"},
+                        {code: "SCI-L3-L03", titre: "Entrepreneuriat Scientifique", credits: 3, description: "Création d'entreprise dans le secteur scientifique", type: "CM"}
+                    ]
+                }
+            },
+            2: {
+                "L1": {
+                    obligatoires: [
+                        {code: "MED-L1-101", titre: "Anatomie Générale", credits: 8, description: "Structure du corps humain", type: "CM/TD"},
+                        {code: "MED-L1-102", titre: "Biologie Cellulaire Médicale", credits: 6, description: "Cellules et tissus humains", type: "CM"},
+                        {code: "MED-L1-103", titre: "Chimie Organique Médicale", credits: 5, description: "Chimie des molécules biologiques", type: "CM/TP"},
+                        {code: "MED-L1-104", titre: "Physiologie Humaine", credits: 6, description: "Fonctionnement des systèmes du corps", type: "CM"},
+                        {code: "MED-L1-105", titre: "Terminologie Médicale", credits: 3, description: "Vocabulaire médical de base", type: "TD"}
+                    ],
+                    optionnelles: [
+                        {code: "MED-L1-201", titre: "Histologie", credits: 4, description: "Étude microscopique des tissus", type: "CM/TP"},
+                        {code: "MED-L1-202", titre: "Biochimie Fondamentale", credits: 4, description: "Métabolisme cellulaire", type: "CM/TP"},
+                        {code: "MED-L1-203", titre: "Santé Publique", credits: 3, description: "Introduction à la santé publique", type: "CM"},
+                        {code: "MED-L1-204", titre: "Psychologie Médicale", credits: 3, description: "Aspects psychologiques de la médecine", type: "CM"}
+                    ],
+                    libre: [
+                        {code: "MED-L1-L01", titre: "Anglais Médical", credits: 2, description: "Terminologie médicale en anglais", type: "TD"},
+                        {code: "MED-L1-L02", titre: "Éthique Médicale", credits: 2, description: "Principes éthiques en médecine", type: "CM"}
+                    ]
+                }
+            },
+            3: {
+                "L1": {
+                    obligatoires: [
+                        {code: "DROIT-L1-101", titre: "Introduction au Droit", credits: 6, description: "Fondements du système juridique", type: "CM"},
+                        {code: "DROIT-L1-102", titre: "Droit Constitutionnel", credits: 6, description: "Organisation des pouvoirs publics", type: "CM"},
+                        {code: "DROIT-L1-103", titre: "Histoire du Droit", credits: 5, description: "Évolution des systèmes juridiques", type: "CM"},
+                        {code: "DROIT-L1-104", titre: "Droit Civil : Personnes et Famille", credits: 6, description: "Statut des personnes et droit familial", type: "CM/TD"},
+                        {code: "DROIT-L1-105", titre: "Économie Politique", credits: 4, description: "Concepts économiques fondamentaux", type: "CM"}
+                    ],
+                    optionnelles: [
+                        {code: "DROIT-L1-201", titre: "Droit des Obligations", credits: 5, description: "Contrats et responsabilité civile", type: "CM/TD"},
+                        {code: "DROIT-L1-202", titre: "Institutions Judiciaires", credits: 4, description: "Organisation de la justice", type: "CM"},
+                        {code: "DROIT-L1-203", titre: "Droit Pénal Général", credits: 5, description: "Principes généraux du droit pénal", type: "CM/TD"},
+                        {code: "DROIT-L1-204", titre: "Droit Administratif", credits: 4, description: "Droit de l'administration publique", type: "CM"}
+                    ],
+                    libre: [
+                        {code: "DROIT-L1-L01", titre: "Anglais Juridique", credits: 2, description: "Terminologie juridique en anglais", type: "TD"},
+                        {code: "DROIT-L1-L02", titre: "Méthodologie Juridique", credits: 3, description: "Techniques de raisonnement juridique", type: "TD"}
+                    ]
+                }
+            },
+            4: {
+                "L1": {
+                    obligatoires: [
+                        {code: "LET-L1-101", titre: "Littérature Française I", credits: 6, description: "Histoire de la littérature française", type: "CM"},
+                        {code: "LET-L1-102", titre: "Linguistique Générale", credits: 6, description: "Introduction à la science du langage", type: "CM"},
+                        {code: "LET-L1-103", titre: "Histoire Ancienne", credits: 5, description: "Histoire des civilisations antiques", type: "CM"},
+                        {code: "LET-L1-104", titre: "Philosophie Générale", credits: 5, description: "Introduction aux courants philosophiques", type: "CM"},
+                        {code: "LET-L1-105", titre: "Langue Vivante I", credits: 4, description: "Anglais ou autre langue étrangère", type: "TD"}
+                    ],
+                    optionnelles: [
+                        {code: "LET-L1-201", titre: "Littérature Comparée", credits: 4, description: "Étude comparative des littératures", type: "CM/TD"},
+                        {code: "LET-L1-202", titre: "Histoire Médiévale", credits: 4, description: "Histoire du Moyen Âge", type: "CM"},
+                        {code: "LET-L1-203", titre: "Esthétique Littéraire", credits: 4, description: "Théorie de la création littéraire", type: "CM"},
+                        {code: "LET-L1-204", titre: "Sociologie de la Culture", credits: 4, description: "Phénomènes culturels et sociaux", type: "CM"}
+                    ],
+                    libre: [
+                        {code: "LET-L1-L01", titre: "Latin Fondamental", credits: 3, description: "Initiation à la langue latine", type: "TD"},
+                        {code: "LET-L1-L02", titre: "Expression Écrite", credits: 3, description: "Techniques de rédaction", type: "TD"}
+                    ]
+                }
+            },
+            5: {
+                "L1": {
+                    obligatoires: [
+                        {code: "ECO-L1-101", titre: "Microéconomie", credits: 6, description: "Comportement des agents économiques", type: "CM"},
+                        {code: "ECO-L1-102", titre: "Macroéconomie", credits: 6, description: "Économie nationale et internationale", type: "CM"},
+                        {code: "ECO-L1-103", titre: "Comptabilité Générale", credits: 5, description: "Principes et techniques comptables", type: "CM/TD"},
+                        {code: "ECO-L1-104", titre: "Mathématiques pour l'Économie", credits: 6, description: "Outils mathématiques appliqués", type: "CM/TD"},
+                        {code: "ECO-L1-105", titre: "Introduction à la Gestion", credits: 4, description: "Fondements de la gestion d'entreprise", type: "CM"}
+                    ],
+                    optionnelles: [
+                        {code: "ECO-L1-201", titre: "Statistiques Économiques", credits: 5, description: "Méthodes statistiques en économie", type: "CM/TD"},
+                        {code: "ECO-L1-202", titre: "Droit Commercial", credits: 4, description: "Droit des affaires et commerce", type: "CM"},
+                        {code: "ECO-L1-203", titre: "Histoire Économique", credits: 4, description: "Évolution des systèmes économiques", type: "CM"},
+                        {code: "ECO-L1-204", titre: "Marketing Fondamental", credits: 4, description: "Principes de base du marketing", type: "CM"}
+                    ],
+                    libre: [
+                        {code: "ECO-L1-L01", titre: "Anglais des Affaires", credits: 3, description: "Anglais pour le monde économique", type: "TD"},
+                        {code: "ECO-L1-L02", titre: "Communication Professionnelle", credits: 3, description: "Techniques de communication en entreprise", type: "TD"}
+                    ]
+                }
+            },
+            6: {
+                "L1": {
+                    obligatoires: [
+                        {code: "ING-L1-101", titre: "Mathématiques de l'Ingénieur", credits: 8, description: "Outils mathématiques pour ingénieurs", type: "CM/TD"},
+                        {code: "ING-L1-102", titre: "Physique Appliquée", credits: 7, description: "Physique pour les sciences de l'ingénieur", type: "CM/TP"},
+                        {code: "ING-L1-103", titre: "Informatique pour Ingénieurs", credits: 6, description: "Programmation et algorithmique", type: "CM/TP"},
+                        {code: "ING-L1-104", titre: "Dessin Technique", credits: 5, description: "Techniques de représentation graphique", type: "CM/TP"},
+                        {code: "ING-L1-105", titre: "Matériaux de Construction", credits: 4, description: "Propriétés et utilisation des matériaux", type: "CM"}
+                    ],
+                    optionnelles: [
+                        {code: "ING-L1-201", titre: "Mécanique du Point", credits: 5, description: "Cinématique et dynamique du point", type: "CM/TD"},
+                        {code: "ING-L1-202", titre: "Électricité Fondamentale", credits: 5, description: "Circuits électriques de base", type: "CM/TP"},
+                        {code: "ING-L1-203", titre: "Chimie des Matériaux", credits: 4, description: "Propriétés chimiques des matériaux", type: "CM/TP"},
+                        {code: "ING-L1-204", titre: "Thermodynamique", credits: 5, description: "Principes de la thermodynamique", type: "CM"}
+                    ],
+                    libre: [
+                        {code: "ING-L1-L01", titre: "Anglais Technique", credits: 3, description: "Anglais pour ingénieurs", type: "TD"},
+                        {code: "ING-L1-L02", titre: "Hygiène et Sécurité", credits: 2, description: "Normes de sécurité en ingénierie", type: "CM"}
+                    ]
+                }
+            }
+        };
+        
+        // Données des facultés
+        const facultes = {
+            1: {nom: "Faculté des Sciences", couleur: "#3498db"},
+            2: {nom: "Faculté de Médecine", couleur: "#e74c3c"},
+            3: {nom: "Faculté de Droit", couleur: "#2c3e50"},
+            4: {nom: "Faculté des Lettres", couleur: "#9b59b6"},
+            5: {nom: "Faculté d'Économie", couleur: "#27ae60"},
+            6: {nom: "Faculté d'Ingénierie", couleur: "#f39c12"}
+        };
+        
+        // État de l'application
+        let currentStep = 1;
+        let selectedFaculty = null;
+        let selectedLevel = null;
+        let selectedCourses = [];
+        let studentData = {};
+        let inscriptionNumber = '';
+        let financialSummary = {};
+        
+        // Initialisation
+        document.addEventListener('DOMContentLoaded', function() {
+            setupEventListeners();
+            setupStudentStatusToggle();
+            
+            // Générer un numéro d'inscription initial
+            inscriptionNumber = `UC-2024-${Math.floor(10000 + Math.random() * 90000)}`;
+            document.getElementById('paiement-numero').textContent = inscriptionNumber;
+        });
+        
+        // Configuration des événements
+        function setupEventListeners() {
+            // Navigation entre étapes
+            document.getElementById('next1').addEventListener('click', () => validateStep1());
+            document.getElementById('next2').addEventListener('click', () => validateStep2());
+            document.getElementById('next3').addEventListener('click', () => validateStep3());
+            document.getElementById('submit-inscription').addEventListener('click', () => submitInscription());
+            
+            // Boutons précédent
+            document.getElementById('prev2').addEventListener('click', () => goToStep(1));
+            document.getElementById('prev3').addEventListener('click', () => goToStep(2));
+            document.getElementById('prev4').addEventListener('click', () => goToStep(3));
+            document.getElementById('prev5').addEventListener('click', () => goToStep(4));
+            
+            // Sélection de faculté
+            document.querySelectorAll('.faculty-card').forEach(card => {
+                card.addEventListener('click', function() {
+                    selectFaculty(parseInt(this.dataset.faculty));
+                });
+            });
+            
+            // Fermeture des modals
+            document.querySelectorAll('.close-modal').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    document.getElementById('confirmation-modal').style.display = 'none';
+                });
+            });
+            
+            document.getElementById('close-modal').addEventListener('click', function() {
+                document.getElementById('confirmation-modal').style.display = 'none';
+                resetForm();
+            });
+            
+            document.getElementById('print-inscription').addEventListener('click', function() {
+                window.print();
+            });
+            
+            // Validation en temps réel
+            document.querySelectorAll('#section1 .form-control').forEach(input => {
+                input.addEventListener('blur', validateField);
+            });
+        }
+        
+        // Toggle statut étudiant (nouveau/ancien)
+        function setupStudentStatusToggle() {
+            const nouveauRadio = document.getElementById('nouveau');
+            const ancienRadio = document.getElementById('ancien');
+            const numEtudiantGroup = document.getElementById('num-etudiant-group');
+            
+            nouveauRadio.addEventListener('change', function() {
+                if (this.checked) {
+                    numEtudiantGroup.style.display = 'none';
+                    document.getElementById('num-etudiant').required = false;
+                }
+            });
+            
+            ancienRadio.addEventListener('change', function() {
+                if (this.checked) {
+                    numEtudiantGroup.style.display = 'block';
+                    document.getElementById('num-etudiant').required = true;
+                }
+            });
+        }
+        
+        // ==============================================
+        // FONCTIONS DE CALCUL FINANCIER
+        // ==============================================
+        
+        function calculerCoutCredits(totalCredits) {
+            return totalCredits * PRIX_CREDIT;
+        }
+        
+        function calculerTotalAvantRecharge(totalCredits) {
+            const coutCredits = calculerCoutCredits(totalCredits);
+            return coutCredits + FRAIS_INSCRIPTION + FRAIS_ADMINISTRATIFS + FRAIS_TECHNOLOGIQUES;
+        }
+        
+        function calculerFraisRecharge(totalAvantRecharge) {
+            return Math.round(totalAvantRecharge * TAUX_RECHARGE);
+        }
+        
+        function calculerTotalAPayer(totalAvantRecharge) {
+            const fraisRecharge = calculerFraisRecharge(totalAvantRecharge);
+            return totalAvantRecharge + fraisRecharge;
+        }
+        
+        function formaterMontant(montant) {
+            return new Intl.NumberFormat('fr-FR').format(montant) + ' FCFA';
+        }
+        
+        function calculerResumeFinancier(totalCredits) {
+            const coutCredits = calculerCoutCredits(totalCredits);
+            const totalAvantRecharge = calculerTotalAvantRecharge(totalCredits);
+            const fraisRecharge = calculerFraisRecharge(totalAvantRecharge);
+            const totalAPayer = calculerTotalAPayer(totalAvantRecharge);
+            
+            return {
+                totalCredits: totalCredits,
+                coutCredits: coutCredits,
+                fraisInscription: FRAIS_INSCRIPTION,
+                fraisAdministratifs: FRAIS_ADMINISTRATIFS,
+                fraisTechnologiques: FRAIS_TECHNOLOGIQUES,
+                totalAvantRecharge: totalAvantRecharge,
+                fraisRecharge: fraisRecharge,
+                totalAPayer: totalAPayer,
+                prixCredit: PRIX_CREDIT
+            };
+        }
+        
+        function mettreAJourCalculatriceCredits(totalCredits) {
+            const financial = calculerResumeFinancier(totalCredits);
+            
+            document.getElementById('calc-total-credits').textContent = totalCredits;
+            document.getElementById('calc-cout-credits').textContent = formaterMontant(financial.coutCredits);
+            document.getElementById('calc-total-avant-recharge').textContent = formaterMontant(financial.totalAvantRecharge);
+        }
+        
+        function mettreAJourAffichagePaiement(totalCredits) {
+            const financial = calculerResumeFinancier(totalCredits);
+            
+            // Mettre à jour le montant principal
+            document.getElementById('montant-paiement').textContent = formaterMontant(financial.totalAPayer);
+            
+            // Mettre à jour les détails du paiement
+            const detailsHTML = `
+                <ul style="margin-left: 20px;">
+                    <li>Total crédits: ${financial.totalCredits} crédits</li>
+                    <li>Prix par crédit: ${financial.prixCredit} FCFA</li>
+                    <li>Coût des crédits: ${formaterMontant(financial.coutCredits)}</li>
+                    <li>Frais d'inscription: ${formaterMontant(financial.fraisInscription)}</li>
+                    <li>Frais administratifs: ${formaterMontant(financial.fraisAdministratifs)}</li>
+                    <li>Frais technologiques: ${formaterMontant(financial.fraisTechnologiques)}</li>
+                    <li><strong>Total avant recharge: ${formaterMontant(financial.totalAvantRecharge)}</strong></li>
+                    <li><em>+ Frais de recharge MasterCard (${TAUX_RECHARGE * 100}%): ${formaterMontant(financial.fraisRecharge)}</em></li>
+                    <li><strong>Montant total à payer: ${formaterMontant(financial.totalAPayer)}</strong></li>
+                </ul>
+            `;
+            
+            document.getElementById('paiement-details').innerHTML = detailsHTML;
+            
+            // Sauvegarder le résumé financier
+            financialSummary = financial;
+        }
+        
+        function genererDetailsFinanciersHTML(financial) {
+            return `
+                <ul style="margin-left: 20px;">
+                    <li>Total crédits ECTS: ${financial.totalCredits}</li>
+                    <li>Coût des crédits (${financial.prixCredit} FCFA/crédit): ${formaterMontant(financial.coutCredits)}</li>
+                    <li>Frais d'inscription: ${formaterMontant(financial.fraisInscription)}</li>
+                    <li>Frais administratifs: ${formaterMontant(financial.fraisAdministratifs)}</li>
+                    <li>Frais technologiques: ${formaterMontant(financial.fraisTechnologiques)}</li>
+                    <li><strong>Sous-total: ${formaterMontant(financial.totalAvantRecharge)}</strong></li>
+                    <li>Frais de recharge MasterCard: ${formaterMontant(financial.fraisRecharge)}</li>
+                    <li><strong>Total à payer: ${formaterMontant(financial.totalAPayer)}</strong></li>
+                </ul>
+            `;
+        }
+        
+        // ==============================================
+        // FONCTION D'ENVOI WHATSAPP (MISE À JOUR)
+        // ==============================================
+        function envoyerWhatsAppInscription() {
+            const numero = "+22892871605";
+            
+            // Formater la date de naissance
+            const dateNaissance = new Date(studentData.dateNaissance);
+            const formattedDate = dateNaissance.toLocaleDateString('fr-FR');
+            
+            // Créer la liste des cours
+            let listeCours = "";
+            selectedCourses.forEach((course, index) => {
+                listeCours += `${index + 1}. ${course.titre} (${course.credits} ECTS) - ${course.credits * PRIX_CREDIT} FCFA\n`;
+            });
+            
+            // Formater le message WhatsApp avec les détails financiers
+            const message = `📋 *NOUVELLE INSCRIPTION UNIVERSITAIRE*
+-------------------------------------
+👤 *Étudiant:* ${studentData.nom} ${studentData.prenom}
+📅 *Né(e) le:* ${formattedDate} à ${studentData.lieuNaissance}
+🏛️ *Nationalité:* ${studentData.nationalite}
+🆔 *CIN/Pass:* ${studentData.cin}
+
+📞 *Contact:*
+📧 Email: ${studentData.email}
+☎️ Téléphone: ${studentData.telephone}
+🏠 Adresse: ${studentData.adresse}
+
+🎓 *Informations académiques:*
+📚 Statut: ${studentData.statut === 'nouveau' ? 'Nouvel étudiant' : 'Ancien étudiant'}
+🏫 Faculté: ${studentData.faculteNom}
+📊 Niveau: ${getNiveauText(studentData.niveau)}
+${studentData.numEtudiant ? `🔢 Numéro étudiant: ${studentData.numEtudiant}` : ''}
+
+📚 *Unités d'enseignement (${PRIX_CREDIT} FCFA/crédit):*
+${listeCours}
+💰 *Total crédits:* ${studentData.totalCredits} ECTS
+
+💳 *DÉTAILS FINANCIERS:*
+• Coût des crédits: ${financialSummary.coutCredits.toLocaleString()} FCFA
+• Frais d'inscription: ${FRAIS_INSCRIPTION.toLocaleString()} FCFA
+• Frais administratifs: ${FRAIS_ADMINISTRATIFS.toLocaleString()} FCFA
+• Frais technologiques: ${FRAIS_TECHNOLOGIQUES.toLocaleString()} FCFA
+• Sous-total: ${financialSummary.totalAvantRecharge.toLocaleString()} FCFA
+• Frais de recharge (${TAUX_RECHARGE * 100}%): ${financialSummary.fraisRecharge.toLocaleString()} FCFA
+• *TOTAL À PAYER: ${financialSummary.totalAPayer.toLocaleString()} FCFA*
+
+🔢 *Numéro d'inscription:* ${inscriptionNumber}
+📅 *Date d'inscription:* ${new Date().toLocaleDateString('fr-FR')}
+⏰ *Heure:* ${new Date().toLocaleTimeString('fr-FR')}
+-------------------------------------
+🔗 *Lien de paiement:* https://jeanskodoc.github.io/-CONOMIE-/mastercard.html`;
+            
+            // Encoder le message pour URL WhatsApp
+            const messageEncode = encodeURIComponent(message);
+            const whatsappURL = `https://wa.me/${numero.replace(/\D/g, '')}?text=${messageEncode}`;
+            
+            // Ouvrir WhatsApp dans un nouvel onglet
+            const whatsappWindow = window.open(whatsappURL, '_blank');
+            
+            // Retourner la promesse pour attendre l'envoi
+            return new Promise((resolve) => {
+                setTimeout(() => {
+                    console.log('WhatsApp envoyé au +22892871605 avec détails financiers');
+                    resolve(true);
+                }, 1000);
+            });
+        }
+        
+        // ==============================================
+        // FONCTION DE SAUVEGARDE (MISE À JOUR)
+        // ==============================================
+        function sauvegarderInscription() {
+            const inscriptionData = {
+                ...studentData,
+                selectedCourses: selectedCourses,
+                inscriptionNumber: inscriptionNumber,
+                inscriptionDate: new Date().toISOString(),
+                statutPaiement: "en_attente",
+                dateSauvegarde: new Date().toISOString(),
+                financialSummary: financialSummary,
+                prixCredit: PRIX_CREDIT
+            };
+            
+            // Sauvegarde dans localStorage
+            localStorage.setItem('inscription_universitaire', JSON.stringify(inscriptionData));
+            
+            // Sauvegarde dans un tableau global
+            if (!window.inscriptions) window.inscriptions = [];
+            window.inscriptions.push(inscriptionData);
+            
+            console.log('Inscription sauvegardée avec détails financiers:', inscriptionData);
+            
+            // Afficher la modal de confirmation
+            document.getElementById('numero-inscription').textContent = inscriptionNumber;
+            document.getElementById('date-inscription').textContent = new Date().toLocaleDateString('fr-FR', {
+                weekday: 'long',
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            });
+            
+            // Ajouter les détails financiers dans la modal
+            document.getElementById('modal-financial-details').innerHTML = genererDetailsFinanciersHTML(financialSummary);
+            
+            document.getElementById('confirmation-modal').style.display = 'flex';
+        }
+        
+        // ==============================================
+        // FONCTION DE SOUMISSION PRINCIPALE
+        // ==============================================
+        async function submitInscription() {
+            const conditionsCheckbox = document.getElementById('conditions');
+            const conditionsError = document.getElementById('conditions-error');
+            
+            if (!conditionsCheckbox.checked) {
+                conditionsError.style.display = 'block';
+                conditionsCheckbox.focus();
+                return;
+            }
+            
+            conditionsError.style.display = 'none';
+            
+            // Désactiver le bouton pour éviter les doubles clics
+            const submitBtn = document.getElementById('submit-inscription');
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Envoi en cours...';
+            
+            try {
+                // 1. D'ABORD envoyer par WhatsApp (avant sauvegarde)
+                await envoyerWhatsAppInscription();
+                
+                // 2. PUIS sauvegarder les données
+                sauvegarderInscription();
+                
+                // 3. Afficher la notification WhatsApp dans l'étape 5
+                setTimeout(() => {
+                    document.getElementById('whatsapp-confirmation').style.display = 'flex';
+                    
+                    // 4. Passer à l'étape 5 (paiement) après un délai
+                    setTimeout(() => {
+                        goToStep(5);
+                        submitBtn.disabled = false;
+                        submitBtn.innerHTML = '<i class="fas fa-check"></i> Soumettre l\'inscription';
+                    }, 1000);
+                }, 500);
+                
+            } catch (error) {
+                console.error('Erreur lors de la soumission:', error);
+                alert('Une erreur est survenue lors de l\'envoi. Veuillez réessayer.');
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = '<i class="fas fa-check"></i> Soumettre l\'inscription';
+            }
+        }
+        
+        // Validation étape 1
+        function validateStep1() {
+            let isValid = true;
+            
+            const requiredFields = ['nom', 'prenom', 'date-naissance', 'lieu-naissance', 'nationalite', 'cin', 'email', 'telephone', 'adresse'];
+            
+            requiredFields.forEach(fieldId => {
+                const field = document.getElementById(fieldId);
+                const errorElement = document.getElementById(`${fieldId}-error`);
+                
+                if (!field.value.trim()) {
+                    field.classList.add('error');
+                    errorElement.style.display = 'block';
+                    isValid = false;
+                } else {
+                    field.classList.remove('error');
+                    errorElement.style.display = 'none';
+                }
+            });
+            
+            const emailField = document.getElementById('email');
+            const emailError = document.getElementById('email-error');
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            
+            if (!emailRegex.test(emailField.value)) {
+                emailField.classList.add('error');
+                emailError.textContent = 'Veuillez entrer une adresse email valide';
+                emailError.style.display = 'block';
+                isValid = false;
+            }
+            
+            if (isValid) {
+                studentData = {
+                    nom: document.getElementById('nom').value,
+                    prenom: document.getElementById('prenom').value,
+                    dateNaissance: document.getElementById('date-naissance').value,
+                    lieuNaissance: document.getElementById('lieu-naissance').value,
+                    nationalite: document.getElementById('nationalite').value,
+                    cin: document.getElementById('cin').value,
+                    email: document.getElementById('email').value,
+                    telephone: document.getElementById('telephone').value,
+                    adresse: document.getElementById('adresse').value
+                };
+                
+                goToStep(2);
+            }
+        }
+        
+        // Validation étape 2
+        function validateStep2() {
+            let isValid = true;
+            
+            const niveauField = document.getElementById('niveau');
+            const niveauError = document.getElementById('niveau-error');
+            
+            if (!niveauField.value) {
+                niveauField.classList.add('error');
+                niveauError.style.display = 'block';
+                isValid = false;
+            } else {
+                niveauField.classList.remove('error');
+                niveauError.style.display = 'none';
+                selectedLevel = niveauField.value;
+            }
+            
+            const faculteField = document.getElementById('faculte');
+            const faculteError = document.getElementById('faculte-error');
+            
+            if (!faculteField.value) {
+                faculteError.style.display = 'block';
+                isValid = false;
+            } else {
+                faculteError.style.display = 'none';
+                selectedFaculty = parseInt(faculteField.value);
+            }
+            
+            const ancienRadio = document.getElementById('ancien');
+            if (ancienRadio.checked) {
+                const numEtudiantField = document.getElementById('num-etudiant');
+                const numEtudiantError = document.getElementById('num-etudiant-error');
+                
+                if (!numEtudiantField.value.trim()) {
+                    numEtudiantField.classList.add('error');
+                    numEtudiantError.style.display = 'block';
+                    isValid = false;
+                } else {
+                    numEtudiantField.classList.remove('error');
+                    numEtudiantError.style.display = 'none';
+                    studentData.numEtudiant = numEtudiantField.value;
+                }
+            }
+            
+            if (isValid) {
+                studentData.statut = document.querySelector('input[name="statut"]:checked').value;
+                studentData.niveau = selectedLevel;
+                studentData.faculte = selectedFaculty;
+                studentData.faculteNom = facultes[selectedFaculty].nom;
+                
+                loadUEs();
+                goToStep(3);
+            }
+        }
+        
+        // Validation étape 3
+        function validateStep3() {
+            const totalCredits = calculateTotalCredits();
+            
+            if (totalCredits < 30) {
+                document.getElementById('credits-warning').style.display = 'block';
+                document.getElementById('warning-text').textContent = `Vous devez sélectionner au moins 30 crédits ECTS (actuellement: ${totalCredits} crédits).`;
+                return;
+            }
+            
+            studentData.selectedCourses = selectedCourses;
+            studentData.totalCredits = totalCredits;
+            
+            // Calculer le résumé financier
+            financialSummary = calculerResumeFinancier(totalCredits);
+            
+            updateConfirmationDisplay();
+            goToStep(4);
+        }
+        
+        // Sélectionner une faculté
+        function selectFaculty(facultyId) {
+            document.querySelectorAll('.faculty-card').forEach(card => {
+                card.classList.remove('selected');
+            });
+            
+            const selectedCard = document.querySelector(`.faculty-card[data-faculty="${facultyId}"]`);
+            selectedCard.classList.add('selected');
+            
+            document.getElementById('faculte').value = facultyId;
+        }
+        
+        // Charger les Unités d'Enseignement
+        function loadUEs() {
+            const container = document.getElementById('ue-container');
+            const loadingElement = document.getElementById('loading-ue');
+            
+            loadingElement.style.display = 'block';
+            container.innerHTML = '';
+            
+            setTimeout(() => {
+                loadingElement.style.display = 'none';
+                
+                if (!ueData[selectedFaculty] || !ueData[selectedFaculty][selectedLevel]) {
+                    container.innerHTML = `
+                        <div class="alert alert-warning">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            Aucune Unités d'Enseignement disponible pour cette combinaison faculté/niveau.
+                        </div>
+                    `;
+                    return;
+                }
+                
+                const ues = ueData[selectedFaculty][selectedLevel];
+                
+                selectedCourses = [];
+                
+                if (ues.obligatoires.length > 0) {
+                    const obligatoiresHTML = generateUESection("UE Obligatoires", ues.obligatoires, true);
+                    container.innerHTML += obligatoiresHTML;
+                    
+                    ues.obligatoires.forEach(ue => {
+                        selectedCourses.push({
+                            ...ue,
+                            selected: true
+                        });
+                    });
+                }
+                
+                if (ues.optionnelles.length > 0) {
+                    const optionnellesHTML = generateUESection("UE Optionnelles", ues.optionnelles, false);
+                    container.innerHTML += optionnellesHTML;
+                }
+                
+                if (ues.libre.length > 0) {
+                    const libreHTML = generateUESection("UE Libre", ues.libre, false);
+                    container.innerHTML += libreHTML;
+                }
+                
+                setupUECheckboxes();
+                updateCreditsSummary();
+            }, 500);
+        }
+        
+        // Générer une section d'UE
+        function generateUESection(title, ues, isObligatoire) {
+            let html = `
+                <div class="ue-level">
+                    <div class="ue-level-title">
+                        ${title}
+                        ${isObligatoire ? '<span class="credits">Obligatoire</span>' : ''}
+                    </div>
+                    <div class="ue-courses">
+            `;
+            
+            ues.forEach(ue => {
+                html += `
+                    <div class="ue-course ${isObligatoire ? 'selected' : ''}">
+                        <div class="ue-course-header">
+                            <div class="ue-course-code">${ue.code}</div>
+                            <div class="ue-course-credits">${ue.credits} ECTS</div>
+                        </div>
+                        <div class="ue-course-title">${ue.titre}</div>
+                        <div class="ue-course-desc">${ue.description}</div>
+                        <div class="ue-course-type">${ue.type}</div>
+                        ${!isObligatoire ? `
+                            <div class="ue-course-checkbox">
+                                <input type="checkbox" id="${ue.code}" ${isObligatoire ? 'checked disabled' : ''}>
+                                <label for="${ue.code}">Sélectionner cette UE</label>
+                            </div>
+                        ` : ''}
+                    </div>
+                `;
+            });
+            
+            html += `
+                    </div>
+                </div>
+            `;
+            
+            return html;
+        }
+        
+        // Configurer les cases à cocher des UE
+        function setupUECheckboxes() {
+            document.querySelectorAll('.ue-course-checkbox input[type="checkbox"]').forEach(checkbox => {
+                checkbox.addEventListener('change', function() {
+                    const ueCode = this.id;
+                    const ueCourse = this.closest('.ue-course');
+                    
+                    if (this.checked) {
+                        ueCourse.classList.add('selected');
+                        
+                        const allUes = [
+                            ...ueData[selectedFaculty][selectedLevel].obligatoires,
+                            ...ueData[selectedFaculty][selectedLevel].optionnelles,
+                            ...ueData[selectedFaculty][selectedLevel].libre
+                        ];
+                        
+                        const ue = allUes.find(u => u.code === ueCode);
+                        if (ue) {
+                            selectedCourses.push({
+                                ...ue,
+                                selected: true
+                            });
+                        }
+                    } else {
+                        ueCourse.classList.remove('selected');
+                        selectedCourses = selectedCourses.filter(course => course.code !== ueCode);
+                    }
+                    
+                    updateCreditsSummary();
+                });
+            });
+        }
+        
+        // Mettre à jour le résumé des crédits
+        function updateCreditsSummary() {
+            let creditsObligatoires = 0;
+            let creditsOptionnelles = 0;
+            let creditsLibre = 0;
+            
+            selectedCourses.forEach(course => {
+                const ues = ueData[selectedFaculty][selectedLevel];
+                
+                if (ues.obligatoires.some(u => u.code === course.code)) {
+                    creditsObligatoires += course.credits;
+                } else if (ues.optionnelles.some(u => u.code === course.code)) {
+                    creditsOptionnelles += course.credits;
+                } else if (ues.libre.some(u => u.code === course.code)) {
+                    creditsLibre += course.credits;
+                }
+            });
+            
+            const totalCredits = creditsObligatoires + creditsOptionnelles + creditsLibre;
+            
+            document.getElementById('credits-obligatoires').textContent = creditsObligatoires;
+            document.getElementById('credits-optionnelles').textContent = creditsOptionnelles;
+            document.getElementById('credits-libre').textContent = creditsLibre;
+            document.getElementById('credits-total').textContent = totalCredits;
+            
+            // Mettre à jour la calculatrice de crédits
+            mettreAJourCalculatriceCredits(totalCredits);
+            
+            const warningElement = document.getElementById('credits-warning');
+            if (totalCredits < 30) {
+                warningElement.style.display = 'block';
+                document.getElementById('warning-text').textContent = `Vous devez sélectionner au moins 30 crédits ECTS (actuellement: ${totalCredits} crédits).`;
+            } else {
+                warningElement.style.display = 'none';
+            }
+        }
+        
+        // Calculer le total des crédits
+        function calculateTotalCredits() {
+            return selectedCourses.reduce((total, course) => total + course.credits, 0);
+        }
+        
+        // Mettre à jour l'affichage de confirmation
+        function updateConfirmationDisplay() {
+            const dateNaissance = new Date(studentData.dateNaissance);
+            const formattedDate = dateNaissance.toLocaleDateString('fr-FR');
+            
+            document.getElementById('confirmation-personnelles').innerHTML = `
+                ${studentData.nom} ${studentData.prenom}<br>
+                Né(e) le ${formattedDate} à ${studentData.lieuNaissance}<br>
+                ${studentData.nationalite} - CIN: ${studentData.cin}<br>
+                Email: ${studentData.email} - Tél: ${studentData.telephone}<br>
+                ${studentData.adresse}
+            `;
+            
+            const statutText = studentData.statut === 'nouveau' ? 'Nouvel étudiant' : 'Ancien étudiant';
+            const niveauText = getNiveauText(studentData.niveau);
+            
+            let academiqueHTML = `
+                ${statutText}<br>
+                ${studentData.faculteNom}<br>
+                ${niveauText}
+            `;
+            
+            if (studentData.numEtudiant) {
+                academiqueHTML += `<br>Numéro étudiant: ${studentData.numEtudiant}`;
+            }
+            
+            document.getElementById('confirmation-academique').innerHTML = academiqueHTML;
+            
+            const coursesList = document.getElementById('confirmation-courses');
+            coursesList.innerHTML = '';
+            
+            selectedCourses.forEach(course => {
+                const courseElement = document.createElement('div');
+                courseElement.className = 'selected-course-item';
+                courseElement.innerHTML = `
+                    <div>
+                        <strong>${course.code}</strong> - ${course.titre}
+                    </div>
+                    <div>
+                        ${course.credits} ECTS - ${(course.credits * PRIX_CREDIT).toLocaleString()} FCFA
+                    </div>
+                `;
+                coursesList.appendChild(courseElement);
+            });
+            
+            // Afficher le résumé financier
+            const financialHTML = `
+                <ul style="margin-left: 20px;">
+                    <li>Total crédits: ${studentData.totalCredits}</li>
+                    <li>Coût des crédits (${PRIX_CREDIT} FCFA/crédit): ${formaterMontant(financialSummary.coutCredits)}</li>
+                    <li>Frais d'inscription: ${formaterMontant(FRAIS_INSCRIPTION)}</li>
+                    <li>Frais administratifs: ${formaterMontant(FRAIS_ADMINISTRATIFS)}</li>
+                    <li>Frais technologiques: ${formaterMontant(FRAIS_TECHNOLOGIQUES)}</li>
+                    <li><strong>Total avant recharge: ${formaterMontant(financialSummary.totalAvantRecharge)}</strong></li>
+                    <li><em>Frais de recharge MasterCard (${TAUX_RECHARGE * 100}%): ${formaterMontant(financialSummary.fraisRecharge)}</em></li>
+                    <li><strong>Montant total à payer: ${formaterMontant(financialSummary.totalAPayer)}</strong></li>
+                </ul>
+            `;
+            
+            document.getElementById('confirmation-financier').innerHTML = financialHTML;
+        }
+        
+        // Aller à une étape spécifique
+        function goToStep(step) {
+            document.querySelectorAll('.form-section').forEach(section => {
+                section.classList.remove('active');
+            });
+            
+            document.querySelectorAll('.step').forEach(stepElement => {
+                stepElement.classList.remove('active', 'completed');
+            });
+            
+            document.getElementById(`section${step}`).classList.add('active');
+            document.getElementById(`step${step}`).classList.add('active');
+            
+            for (let i = 1; i < step; i++) {
+                document.getElementById(`step${i}`).classList.add('completed');
+            }
+            
+            currentStep = step;
+            
+            if (step === 5 && studentData.totalCredits) {
+                document.getElementById('paiement-numero').textContent = inscriptionNumber;
+                mettreAJourAffichagePaiement(studentData.totalCredits);
+            }
+        }
+        
+        // Valider un champ individuel
+        function validateField() {
+            const field = this;
+            const errorElement = document.getElementById(`${field.id}-error`);
+            
+            if (!field.value.trim()) {
+                field.classList.add('error');
+                errorElement.style.display = 'block';
+                return false;
+            }
+            
+            if (field.id === 'email') {
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                if (!emailRegex.test(field.value)) {
+                    field.classList.add('error');
+                    errorElement.textContent = 'Veuillez entrer une adresse email valide';
+                    errorElement.style.display = 'block';
+                    return false;
+                }
+            }
+            
+            field.classList.remove('error');
+            errorElement.style.display = 'none';
+            return true;
+        }
+        
+        // Obtenir le texte du niveau
+        function getNiveauText(niveauCode) {
+            const niveaux = {
+                'L1': 'Licence 1 (L1)',
+                'L2': 'Licence 2 (L2)',
+                'L3': 'Licence 3 (L3)',
+                'M1': 'Master 1 (M1)',
+                'M2': 'Master 2 (M2)'
+            };
+            
+            return niveaux[niveauCode] || niveauCode;
+        }
+        
+        // Réinitialiser le formulaire
+        function resetForm() {
+            document.querySelectorAll('input, textarea, select').forEach(element => {
+                if (element.type !== 'button' && element.type !== 'submit') {
+                    element.value = '';
+                    element.checked = false;
+                    element.classList.remove('error');
+                }
+            });
+            
+            document.querySelectorAll('.faculty-card').forEach(card => {
+                card.classList.remove('selected');
+            });
+            
+            document.querySelectorAll('.ue-course').forEach(course => {
+                course.classList.remove('selected');
+            });
+            
+            document.querySelectorAll('.ue-course-checkbox input[type="checkbox"]').forEach(checkbox => {
+                checkbox.checked = false;
+                checkbox.disabled = false;
+            });
+            
+            currentStep = 1;
+            selectedFaculty = null;
+            selectedLevel = null;
+            selectedCourses = [];
+            studentData = {};
+            financialSummary = {};
+            
+            // Générer un nouveau numéro d'inscription
+            inscriptionNumber = `UC-2024-${Math.floor(10000 + Math.random() * 90000)}`;
+            document.getElementById('paiement-numero').textContent = inscriptionNumber;
+            
+            document.getElementById('credits-obligatoires').textContent = '0';
+            document.getElementById('credits-optionnelles').textContent = '0';
+            document.getElementById('credits-libre').textContent = '0';
+            document.getElementById('credits-total').textContent = '0';
+            document.getElementById('calc-total-credits').textContent = '0';
+            document.getElementById('calc-cout-credits').textContent = '0 FCFA';
+            document.getElementById('calc-total-avant-recharge').textContent = '0 FCFA';
+            document.getElementById('credits-warning').style.display = 'none';
+            
+            document.getElementById('whatsapp-confirmation').style.display = 'none';
+            
+            goToStep(1);
+            
+            document.getElementById('num-etudiant-group').style.display = 'none';
+            document.getElementById('num-etudiant').required = false;
+            
+            document.getElementById('nouveau').checked = true;
+        }
+    </script>
+</body>
+</html>
